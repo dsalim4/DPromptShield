@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "DPromptShield",
+  "short_name": "DPromptShield",
+  "version": "1.0.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "dpromptshield@yourorg.com",
+      "strict_min_version": "115.0"
+    }
+  },
+  "description": "Detects PII typed into AI chat prompts, logs the event and blocks sending. Monitored sites are controlled entirely from the console. No local agent required \u2014 the relay server records the client's IP directly from the connection.",
+  "permissions": [
+    "storage",
+    "alarms",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://localhost:4000/*"
+  ],
+  "storage": {
+    "managed_schema": "schema.json"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "AIPII Guard",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
+  }
+}

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in — DPromptShield Enterprise Console</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<style>
+  :root {
+    --mandiri-blue: #003D79;
+    --mandiri-blue-dark: #002244;
+    --mandiri-yellow: #FFB700;
+    --mandiri-yellow-hover: #e5a400;
+    --mandiri-sky-blue: #67B2E8;
+    --mandiri-orange: #EA7200;
+    --mandiri-grey: #B6B8BA;
+    --bg: #051121;
+    --panel: #091c36;
+    --panel2: #0e274b;
+    --border: #183e70;
+    --border-light: #245494;
+    --text: #f0f4fa;
+    --muted: #8ea5c4;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+  .brand-stripe {
+    height: 4px;
+    background: linear-gradient(90deg, var(--mandiri-blue) 0%, var(--mandiri-blue) 45%, var(--mandiri-yellow) 45%, var(--mandiri-yellow) 80%, var(--mandiri-sky-blue) 80%, var(--mandiri-sky-blue) 100%);
+  }
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--panel);
+    border: 1px solid var(--border-light);
+    border-top: 3px solid var(--mandiri-yellow);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel2);
+  }
+  .logo {
+    width: 52px; height: 52px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  .card-head h1 { margin: 0; font-size: 18px; font-weight: 700; color: #fff; }
+  .card-head .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  form { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 14px; }
+  label {
+    display: block;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--mandiri-sky-blue);
+    margin-bottom: 5px;
+  }
+  .field { position: relative; }
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+  }
+  input:focus { border-color: var(--mandiri-sky-blue); }
+  .field input[type="password"], .field input.reveal { padding-right: 62px; }
+  .toggle {
+    position: absolute; right: 6px; bottom: 5px;
+    background: none; border: none;
+    color: var(--muted); font-size: 11px; font-weight: 700;
+    cursor: pointer; padding: 5px 8px; border-radius: 3px;
+  }
+  .toggle:hover { color: #fff; }
+  .error {
+    display: none;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .error.show { display: block; }
+  .notice {
+    display: none;
+    background: rgba(255, 183, 0, 0.10);
+    border: 1px solid rgba(255, 183, 0, 0.4);
+    color: #ffd77a;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .notice.show { display: block; }
+  button.submit {
+    background: var(--mandiri-yellow);
+    color: var(--mandiri-blue-dark);
+    border: none; border-radius: 4px;
+    padding: 11px 14px;
+    font-size: 13px; font-weight: 800;
+    cursor: pointer;
+    margin-top: 2px;
+  }
+  button.submit:hover:not(:disabled) { background: var(--mandiri-yellow-hover); }
+  button.submit:disabled { opacity: 0.6; cursor: default; }
+  footer {
+    text-align: center;
+    color: var(--mandiri-grey);
+    font-size: 11px;
+    padding: 0 16px 20px;
+  }
+</style>
+</head>
+<body>
+<div class="brand-stripe"></div>
+<main>
+  <div class="card">
+    <div class="card-head">
+      <img class="logo" src="/logo.png" alt="DPromptShield">
+      <div>
+        <h1>DPromptShield</h1>
+        <div class="sub">Enterprise Console · Authorized administrators only</div>
+      </div>
+    </div>
+    <form id="loginForm" autocomplete="on" novalidate>
+      <div id="loginNotice" class="notice" role="status">You were signed out because of inactivity. Please sign in again.</div>
+      <div id="loginError" class="error" role="alert"></div>
+      <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password">
+        <button type="button" class="toggle" id="togglePw" tabindex="-1">Show</button>
+      </div>
+      <button type="submit" class="submit" id="submitBtn">Sign in</button>
+    </form>
+  </div>
+</main>
+<footer>Bank Mandiri CISO Office Group · DPromptShield DLP System</footer>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  // Sent here by the idle timeout (?expired=1): explain why instead of a bare form.
+  if (new URLSearchParams(location.search).get("expired") === "1") $("loginNotice").classList.add("show");
+
+  // Already signed in? Skip straight to the console.
+  fetch("/api/auth/me").then((r) => { if (r.ok) location.replace("/dashboard.html"); }).catch(() => {});
+
+  $("togglePw").addEventListener("click", () => {
+    const pw = $("password");
+    const show = pw.type === "password";
+    pw.type = show ? "text" : "password";
+    $("togglePw").textContent = show ? "Hide" : "Show";
+  });
+
+  function showError(msg) {
+    const el = $("loginError");
+    el.textContent = msg;
+    el.classList.add("show");
+  }
+
+  $("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    $("loginError").classList.remove("show");
+    const username = $("username").value.trim();
+    const password = $("password").value;
+    if (!username || !password) return showError("Enter your username and password.");
+
+    const btn = $("submitBtn");
+    btn.disabled = true;
+    btn.textContent = "Signing in…";
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        location.replace("/dashboard.html");
+        return;
+      }
+      showError(data.error || "Sign in failed.");
+      $("password").value = "";
+      $("password").focus();
+    } catch (_) {
+      showError("Cannot reach the server. Check that the relay is running.");
+    }
+    btn.disabled = false;
+    btn.textContent = "Sign in";
+  });
+</script>
+</body>
+</html>

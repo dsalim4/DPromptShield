@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "DPromptShield",
+  "short_name": "DPromptShield",
+  "version": "1.0.4",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA272Pfo9qb9FPSPyoj3ZFUSUrrJi7c/G57pixt0PoZTpRBYkY1mIF10QenU510rQKe9j0iTqJFDi/wbcoGZn/4pI6oaFUvL8AENoWTIrZb7Kwo9f2utem5eY/Kk6KK/uPpOHY1lROwj0ipiioNk9jjZEVJyXkCRgQatOGc4bL51IiVjn5bQvFSHvGexe1a0eoU12frY7pYown/2+6rHYh4wQ6FrhvjUZHLBdrJyEdSMiaS+1HFO0Hlm2pnGd4uXCrDGEXEx8CFnCaQNDOX/pUIgNumeaQCHkJxUd0uULt5FI3Yr9NRsTqVuyl5pPnHVsyB7LiMavbSGKwb2qsFzXKpwIDAQAB",
+  "description": "Detects PII typed into AI chat prompts, logs the event and blocks sending. Monitored sites are controlled entirely from the console. No local agent required \u2014 the relay server records the client's IP directly from the connection.",
+  "permissions": [
+    "storage",
+    "alarms",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://localhost:4000/*"
+  ],
+  "storage": {
+    "managed_schema": "schema.json"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "AIPII Guard",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
+  }
+}

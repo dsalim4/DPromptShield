@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DPromptShield AI Security Lab</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0b1220;
+            --panel: #121d30;
+            --line: #26364e;
+            --txt: #edf4ff;
+            --muted: #a4b3c9;
+            --blue: #69a9ff;
+            --green: #66d7b0;
+            --amber: #ffcf70
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(140deg, #0b1220, #101c30);
+            color: var(--txt);
+            font: 15px/1.55 Inter, system-ui, Segoe UI, sans-serif
+        }
+
+        .wrap {
+            max-width: 1150px;
+            margin: auto;
+            padding: 28px 18px
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .brand {
+            font-weight: 800;
+            font-size: 23px
+        }
+
+        .sub {
+            color: var(--muted)
+        }
+
+        a {
+            color: var(--blue)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 16px;
+            margin-top: 24px
+        }
+
+        .card {
+            background: #121d30eF;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 12px 30px #0002
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin: 0 0 8px
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        label {
+            display: block;
+            margin: 12px 0 6px;
+            color: #c9d8ec;
+            font-size: 13px
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            background: #0a1425;
+            border: 1px solid #30425d;
+            color: var(--txt);
+            padding: 11px;
+            border-radius: 9px;
+            font: inherit
+        }
+
+        textarea {
+            min-height: 115px;
+            resize: vertical
+        }
+
+        button {
+            background: var(--blue);
+            color: #081321;
+            border: 0;
+            border-radius: 9px;
+            padding: 11px 15px;
+            font-weight: 750;
+            cursor: pointer;
+            margin-top: 12px
+        }
+
+        button:disabled {
+            opacity: .5;
+            cursor: wait
+        }
+
+        .result {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            background: #091321;
+            border: 1px solid var(--line);
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 14px;
+            min-height: 48px;
+            font: 12px/1.5 ui-monospace, Consolas, monospace
+        }
+
+        .notice {
+            border-left: 3px solid var(--amber);
+            padding: 10px 12px;
+            background: #ffcf7010;
+            color: #e6d5b0;
+            font-size: 12px;
+            margin-top: 18px
+        }
+
+        .status {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .wide {
+            grid-column: 1/-1
+        }
+
+        @media(max-width:600px) {
+            .wrap {
+                padding: 16px 12px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <header class="top">
+            <div>
+                <div class="brand">DPromptShield <span style="color:var(--blue)">AI Security Lab</span></div>
+                <div class="sub">Human-reviewed AI recommendations for enterprise data protection</div>
+            </div><a href="/dashboard.html">← Admin Console</a>
+        </header>
+        <p id="status" class="status">Checking AI service configuration…</p>
+        <div class="grid">
+            <section class="card">
+                <h2>01 / Regulation-to-Policy</h2>
+                <p>Paste extracted text from UU PDP, GDPR, or an internal policy. Gemini proposes classifications; it
+                    does not activate them automatically.</p><label>Document title</label><input id="title"
+                    value="UU PDP / GDPR policy excerpt"><label>Regulation text</label><textarea id="regtext"
+                    placeholder="Paste relevant policy text here (avoid unrelated personal data)…"></textarea><button
+                    onclick="run('reg')">Generate classifications</button>
+                <div id="regout" class="result">Results will appear here.</div>
+            </section>
+            <section class="card">
+                <h2>02 / URL Risk Advisor</h2>
+                <p>Assess a URL using hostname and supplied context. This is advisory analysis, not live
+                    threat-intelligence or a reputation scan.</p><label>URL</label><input id="url"
+                    placeholder="https://example.com/ai-chat"><label>Business context (optional)</label><textarea
+                    id="context"
+                    placeholder="Example: external AI assistant used by staff to summarize customer documents"></textarea><button
+                    onclick="run('url')">Assess URL risk</button>
+                <div id="urlout" class="result">Results will appear here.</div>
+            </section>
+            <section class="card wide">
+                <h2>03 / Content & Image DLP Inspector</h2>
+                <p>Demo scanner for text or a PNG/JPEG/WebP image (OCR/visual extraction via Gemini). This is not a
+                    browser upload interceptor and does not change files.</p><label>Text / source code / document
+                    excerpt</label><textarea id="content"
+                    placeholder="Paste a synthetic test sample, e.g. fake customer record or sample code with a dummy secret…"></textarea><label>Optional
+                    image</label><input id="image" type="file" accept="image/png,image/jpeg,image/webp"><button
+                    onclick="run('content')">Inspect content</button>
+                <div id="contentout" class="result">Results will appear here.</div>
+            </section>
+        </div>
+        <div class="notice"><b>Security boundary:</b> text and images submitted here are sent to the configured Gemini
+            API for analysis. Use synthetic data during demos. Do not upload real regulated data unless your
+            organization has approved that processing. Only summarized audit metadata is written to Firestore; raw
+            content is not intentionally stored by this application. AI output is untrusted and must be reviewed before
+            changing enforcement policy.</div>
+    </main>
+    <script>
+        async function api(path, body) { const r = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(body) }); const j = await r.json().catch(() => ({ error: 'Invalid server response' })); if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`); return j }
+        async function run(kind) { const out = document.getElementById(kind + 'out'); const btn = event.currentTarget; btn.disabled = true; out.textContent = 'Analyzing…'; try { let data; if (kind === 'reg') { data = await api('/api/ai/classify-regulation', { title: document.getElementById('title').value, text: document.getElementById('regtext').value }) } else if (kind === 'url') { data = await api('/api/ai/analyze-url', { url: document.getElementById('url').value, context: document.getElementById('context').value }) } else { let body = { text: document.getElementById('content').value }; const f = document.getElementById('image').files[0]; if (f) { if (f.size > 3.5 * 1024 * 1024) throw new Error('Choose an image smaller than 3.5 MB for this demo.'); body.image = { mimeType: f.type, data: await new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(String(r.result).split(',')[1]); r.onerror = reject; r.readAsDataURL(f) }) } } data = await api('/api/ai/inspect-content', body) } out.textContent = JSON.stringify(data, null, 2) } catch (e) { out.textContent = 'Error: ' + e.message } finally { btn.disabled = false } }
+        (async () => { try { const r = await fetch('/api/ai/status', { credentials: 'same-origin' }); const j = await r.json(); document.getElementById('status').textContent = `Gemini: ${j.geminiConfigured ? 'configured' : 'NOT configured'} · Model: ${j.model} · Firestore audit: ${j.firestoreAuditConfigured ? 'configured' : 'not configured'}` } catch { document.getElementById('status').textContent = 'Unable to read service status' } })();
+    </script>
+</body>
+
+</html>

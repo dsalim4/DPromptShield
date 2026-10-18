@@ -1,0 +1,3727 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DPromptShield — Enterprise DLP Console</title>
+  <link rel="icon" type="image/jpeg" href="1x1logo.png">
+  <style>
+    :root {
+      --mandiri-blue: #003D79;
+      --mandiri-blue-dark: #002244;
+      --mandiri-blue-mid: #002e5c;
+      --mandiri-blue-light: #0056a8;
+      --mandiri-yellow: #FFB700;
+      --mandiri-yellow-hover: #e5a400;
+      --mandiri-sky-blue: #67B2E8;
+      --mandiri-orange: #EA7200;
+      --mandiri-grey: #B6B8BA;
+      --bg: #051121;
+      --panel: #091c36;
+      --panel2: #0e274b;
+      --panel3: #143566;
+      --border: #183e70;
+      --border-light: #245494;
+      --text: #f0f4fa;
+      --text-dim: #cad5e5;
+      --muted: #8ea5c4;
+      --green: #22c55e;
+      --red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      padding: 0 0 32px;
+    }
+
+    .brand-stripe {
+      height: 4px;
+      background: linear-gradient(90deg, var(--mandiri-blue) 0%, var(--mandiri-blue) 45%, var(--mandiri-yellow) 45%, var(--mandiri-yellow) 80%, var(--mandiri-sky-blue) 80%, var(--mandiri-sky-blue) 100%);
+    }
+
+    .main-wrapper {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    /* Header */
+    header.app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-logo {
+      width: 38px;
+      height: 38px;
+      background: var(--mandiri-yellow);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--mandiri-blue-dark);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: -0.05em;
+    }
+
+    .header-title-block h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title-block .env-pill {
+      font-size: 10px;
+      background: rgba(103, 178, 232, 0.15);
+      color: var(--mandiri-sky-blue);
+      border: 1px solid rgba(103, 178, 232, 0.35);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .header-title-block .subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .meta-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-dim);
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      display: inline-block;
+    }
+
+    .status-dot.ok {
+      background: var(--green);
+    }
+
+    .status-dot.down {
+      background: var(--mandiri-orange);
+    }
+
+    /* App shell: left sidebar + content */
+    .app-shell {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .navbar-container {
+      position: sticky;
+      top: 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--mandiri-yellow);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0;
+    }
+
+    .nav-tab {
+      background: transparent;
+      border: none;
+      border-left: 3px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 9px;
+      width: 100%;
+      text-align: left;
+      user-select: none;
+    }
+
+    .nav-tab:hover {
+      color: var(--text);
+      background: rgba(103, 178, 232, 0.05);
+    }
+
+    .nav-tab.active {
+      color: #ffffff;
+      background: var(--panel2);
+      border-left-color: var(--mandiri-yellow);
+      font-weight: 700;
+    }
+
+    .tab-badge {
+      background: rgba(103, 178, 232, 0.15);
+      color: var(--mandiri-sky-blue);
+      border: 1px solid rgba(103, 178, 232, 0.3);
+      border-radius: 12px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .nav-tab.active .tab-badge {
+      background: var(--mandiri-yellow);
+      color: var(--mandiri-blue-dark);
+      border-color: var(--mandiri-yellow);
+    }
+
+    .view-container {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px;
+      min-height: 520px;
+      min-width: 0;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .view-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .view-heading {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .view-heading::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      background: var(--mandiri-yellow);
+      border-radius: 2px;
+    }
+
+    .view-desc {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+      position: relative;
+      border-top: 3px solid var(--border);
+    }
+
+    .metric-card:nth-child(1) {
+      border-top-color: var(--mandiri-yellow);
+    }
+
+    .metric-card:nth-child(2) {
+      border-top-color: var(--mandiri-sky-blue);
+    }
+
+    .metric-card:nth-child(3) {
+      border-top-color: var(--mandiri-orange);
+    }
+
+    .metric-card:nth-child(4) {
+      border-top-color: var(--mandiri-blue-light);
+    }
+
+    .metric-card .num {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .metric-card .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+
+    .toolbar input,
+    .toolbar select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 4px;
+      padding: 7px 11px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .toolbar input:focus,
+    .toolbar select:focus {
+      border-color: var(--mandiri-sky-blue);
+    }
+
+    .toolbar input::placeholder {
+      color: #5d7596;
+    }
+
+    .toolbar .spacer {
+      flex: 1;
+    }
+
+    button.btn {
+      border: none;
+      border-radius: 4px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    button.btn-primary {
+      background: var(--mandiri-yellow);
+      color: var(--mandiri-blue-dark);
+    }
+
+    button.btn-primary:hover {
+      background: var(--mandiri-yellow-hover);
+    }
+
+    button.btn-secondary {
+      background: var(--panel3);
+      color: var(--mandiri-sky-blue);
+      border: 1px solid var(--border);
+    }
+
+    button.btn-secondary:hover {
+      background: #1c4987;
+      color: #ffffff;
+      border-color: var(--mandiri-sky-blue);
+    }
+
+    button.btn-danger {
+      background: rgba(234, 114, 0, 0.15);
+      color: #ff9e59;
+      border: 1px solid rgba(234, 114, 0, 0.4);
+    }
+
+    button.btn-danger:hover {
+      background: rgba(234, 114, 0, 0.3);
+      color: #ffffff;
+    }
+
+    .table-box {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: transparent;
+    }
+
+    table.data-table thead th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--mandiri-sky-blue);
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      background: #091e3b;
+      font-weight: 700;
+    }
+
+    table.data-table tbody td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(24, 62, 112, 0.5);
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    table.data-table tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    table.data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.data-table tbody tr:hover {
+      background: rgba(103, 178, 232, 0.06);
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(0, 61, 121, 0.7);
+      color: var(--mandiri-sky-blue);
+      border: 1px solid #1c4b85;
+      border-radius: 3px;
+      padding: 2px 7px;
+      margin: 2px 4px 2px 0;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .masked {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .ip-code {
+      color: var(--mandiri-sky-blue);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .ip-link {
+      color: var(--mandiri-sky-blue);
+      cursor: pointer;
+      text-decoration: underline dotted;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-weight: 700;
+    }
+
+    .ip-link:hover {
+      color: #ffffff;
+    }
+
+    .site-title {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .status-pill-badge {
+      display: inline-block;
+      border-radius: 3px;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .status-active {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .status-inactive {
+      color: var(--muted);
+    }
+
+    .empty-cell,
+    .error-cell {
+      text-align: center;
+      color: var(--muted);
+      padding: 36px 20px;
+      font-size: 13px;
+    }
+
+    .error-cell {
+      color: var(--mandiri-orange);
+    }
+
+    .table-pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 10px 16px;
+      background: #091e3b;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--mandiri-grey);
+    }
+
+    .pagination-left,
+    .pagination-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pagination-select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      outline: none;
+      font-weight: 600;
+    }
+
+    .pagination-center {
+      color: var(--mandiri-sky-blue);
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .pagination-btn {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--panel3);
+      color: #ffffff;
+      border-color: var(--mandiri-sky-blue);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .pagination-page {
+      font-weight: 600;
+      color: var(--text);
+      padding: 0 4px;
+      font-size: 12px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 10, 20, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+    }
+
+    .modal-dialog {
+      background: var(--panel);
+      border: 1px solid var(--border-light);
+      border-top: 3px solid var(--mandiri-yellow);
+      border-radius: 8px;
+      width: 92%;
+      max-width: 480px;
+      overflow: hidden;
+    }
+
+    .modal-dialog-lg {
+      max-width: 580px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel2);
+    }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 2px 6px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: #ffffff;
+    }
+
+    .modal-body {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--mandiri-sky-blue);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .modal-input:focus {
+      border-color: var(--mandiri-sky-blue);
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .modal-grid-3 {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 10px;
+    }
+
+    .modal-tip {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 12px 18px;
+      background: var(--panel2);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Analytics */
+    .analytics-grid-2x2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .analytics-card {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .analytics-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(24, 62, 112, 0.6);
+    }
+
+    .analytics-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .analytics-card-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .analytics-chart-container {
+      min-height: 180px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .analytics-bar-row {
+      margin-bottom: 10px;
+    }
+
+    .analytics-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .analytics-bar-name {
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 75%;
+      cursor: pointer;
+    }
+
+    .analytics-bar-name:hover {
+      color: var(--mandiri-sky-blue);
+      text-decoration: underline;
+    }
+
+    .analytics-bar-val {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-weight: 700;
+      color: var(--mandiri-sky-blue);
+    }
+
+    .analytics-bar-track {
+      height: 8px;
+      background: var(--bg);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(24, 62, 112, 0.6);
+    }
+
+    .analytics-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: none;
+    }
+
+    .analytics-table-mini {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-top: auto;
+    }
+
+    .analytics-table-mini th {
+      text-align: left;
+      color: var(--mandiri-sky-blue);
+      font-size: 10px;
+      text-transform: uppercase;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+    }
+
+    .analytics-table-mini td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(24, 62, 112, 0.4);
+      vertical-align: middle;
+    }
+
+    .analytics-table-mini tr:last-child td {
+      border-bottom: none;
+    }
+
+    .clickable-filter {
+      cursor: pointer;
+    }
+
+    .clickable-filter:hover {
+      color: var(--mandiri-yellow);
+      text-decoration: underline;
+    }
+
+    footer.app-footer {
+      margin-top: 28px;
+      padding: 14px 20px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--mandiri-grey);
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text);
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .role-badge {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(103, 178, 232, 0.15);
+      color: var(--mandiri-sky-blue);
+      border: 1px solid rgba(103, 178, 232, 0.35);
+    }
+
+    .role-badge.super {
+      background: rgba(255, 183, 0, 0.15);
+      color: var(--mandiri-yellow);
+      border-color: rgba(255, 183, 0, 0.45);
+    }
+
+    .modal-error {
+      display: none;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .modal-error.show {
+      display: block;
+    }
+
+    .modal-error.ok {
+      background: rgba(34, 197, 94, 0.12);
+      border-color: rgba(34, 197, 94, 0.4);
+      color: #86efac;
+    }
+
+    /* Hamburger toggle (shows / hides the sidebar) */
+    .nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .nav-toggle:hover {
+      background: var(--panel3);
+      border-color: var(--mandiri-sky-blue);
+      color: #ffffff;
+    }
+
+    .nav-toggle:focus-visible {
+      outline: 2px solid var(--mandiri-yellow);
+      outline-offset: 2px;
+    }
+
+    .nav-burger {
+      position: relative;
+      width: 18px;
+      height: 14px;
+      display: inline-block;
+    }
+
+    .nav-burger i {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--mandiri-yellow);
+      border-radius: 2px;
+      transition: transform .2s ease, opacity .2s ease, top .2s ease;
+    }
+
+    .nav-burger i:nth-child(1) {
+      top: 0;
+    }
+
+    .nav-burger i:nth-child(2) {
+      top: 6px;
+    }
+
+    .nav-burger i:nth-child(3) {
+      top: 12px;
+    }
+
+    .nav-toggle.open .nav-burger i:nth-child(1) {
+      top: 6px;
+      transform: rotate(45deg);
+    }
+
+    .nav-toggle.open .nav-burger i:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.open .nav-burger i:nth-child(3) {
+      top: 6px;
+      transform: rotate(-45deg);
+    }
+
+    /* Popup navigation: floats over the content, which always stays full width */
+    header.app-header {
+      position: relative;
+      z-index: 1001;
+    }
+
+    .app-shell {
+      display: block;
+      position: relative;
+    }
+
+    .navbar-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: 270px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      border-radius: 8px;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-8px);
+      transition: opacity .18s ease, transform .18s ease, visibility .18s;
+    }
+
+    .app-shell.nav-open .navbar-container {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .nav-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(3, 10, 20, 0.45);
+    }
+
+    .app-shell.nav-open .nav-backdrop {
+      display: block;
+    }
+
+    /* ---- Filter bars, group chips, group popups (group management update) ---- */
+    .filter-bar {
+      margin-bottom: 12px;
+    }
+
+    .filter-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--mandiri-sky-blue);
+    }
+
+    .filter-bar input[type=text] {
+      min-width: 260px;
+      flex: 1;
+    }
+
+    .filter-exact {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .filter-exact input {
+      accent-color: var(--mandiri-yellow);
+      cursor: pointer;
+    }
+
+    .filter-count {
+      color: var(--muted);
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .group-chip {
+      display: inline-block;
+      background: rgba(255, 183, 0, 0.14);
+      color: var(--mandiri-yellow);
+      border: 1px solid rgba(255, 183, 0, 0.45);
+      border-radius: 12px;
+      padding: 2px 10px;
+      margin: 2px 4px 2px 0;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .group-chip:hover {
+      background: rgba(255, 183, 0, 0.28);
+      color: #ffffff;
+    }
+
+    .group-chip.general {
+      background: rgba(142, 165, 196, 0.12);
+      color: var(--muted);
+      border-color: rgba(142, 165, 196, 0.35);
+    }
+
+    .group-chip.general:hover {
+      background: rgba(142, 165, 196, 0.25);
+      color: #ffffff;
+    }
+
+    .tag.all {
+      background: rgba(34, 197, 94, 0.14);
+      color: var(--green);
+      border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    .tag.more {
+      background: transparent;
+      color: var(--muted);
+      border-color: var(--border);
+    }
+
+    .row-flash td {
+      animation: rowFlash 2.4s ease-out 1;
+    }
+
+    @keyframes rowFlash {
+
+      0%,
+      40% {
+        background: rgba(255, 183, 0, 0.32);
+      }
+
+      100% {
+        background: transparent;
+      }
+    }
+
+    .modal-dialog-xl {
+      max-width: 880px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-dialog-xl .modal-body {
+      overflow-y: auto;
+    }
+
+    .gd-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 18px;
+    }
+
+    .gd-text {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .gd-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .gd-members-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .gd-search {
+      max-width: 260px;
+    }
+
+    .gd-members {
+      max-height: 300px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .gd-members table.data-table {
+      width: 100%;
+    }
+
+    button.btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .check-list {
+      max-height: 168px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 10px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .check-list.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .check-item input,
+    .check-all input {
+      accent-color: var(--mandiri-yellow);
+      cursor: pointer;
+    }
+
+    .check-all {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--mandiri-yellow);
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .ip-chip {
+      display: inline-block;
+      background: var(--panel3);
+      color: var(--mandiri-sky-blue);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 8px;
+      margin: 2px 4px 2px 0;
+      font-size: 11px;
+      font-family: ui-monospace, monospace;
+      cursor: pointer;
+    }
+
+    .ip-chip:hover {
+      border-color: var(--mandiri-sky-blue);
+      color: #ffffff;
+    }
+
+    textarea.modal-input {
+      min-height: 96px;
+      resize: vertical;
+      font-family: ui-monospace, monospace;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="brand-stripe"></div>
+
+  <div class="main-wrapper">
+    <!-- Corporate Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <button type="button" class="nav-toggle" id="navToggle" aria-controls="topNav" aria-expanded="false"
+          onclick="toggleNav()">
+          <span class="nav-burger" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span id="navToggleLabel">Show Navigation</span>
+        </button>
+        <div class="header-logo">
+          <img src="logo.png" alt="DPromptShield Logo" class="header-logo">
+        </div>
+        <div class="header-title-block">
+          <h1>DPromptShield <span class="env-pill">Enterprise Console</span></h1>
+          <div class="subtitle">CISO Office Group · Data Loss Prevention</div>
+        </div>
+      </div>
+      <div class="header-user" id="headerUser" style="display:none;">
+        <div class="user-chip">
+          <span id="userName"></span>
+          <span class="role-badge" id="userRole"></span>
+        </div>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/domain-policy.html'">Domain Policies</button>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/ai-lab.html'">AI Security
+          Lab ↗</button>
+        <button type="button" class="btn btn-secondary" onclick="openChangePassword()">Change Password</button>
+        <button type="button" class="btn btn-danger" onclick="logout()">Logout</button>
+      </div>
+      <!-- Hidden on purpose: setStatus() still updates these elements -->
+      <div class="header-meta" style="display:none;" aria-hidden="true">
+        <div class="meta-tag">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Checking relay...</span>
+        </div>
+        <div class="meta-tag"><span>Policy Engine: Active</span></div>
+        <div class="meta-tag"><span>Channel: Real-Time SSE</span></div>
+      </div>
+    </header>
+
+    <div class="app-shell" id="appShell">
+
+      <div class="nav-backdrop" id="navBackdrop" onclick="setNav(false)"></div>
+
+      <!-- Left Sidebar Navigation -->
+      <nav class="navbar-container" id="topNav" role="tablist">
+        <button type="button" class="nav-tab active" data-tab="tab-analytics" onclick="switchTab('tab-analytics')">
+          <span>Data Analytics</span>
+          <span class="tab-badge" id="badgeAnalytics">0</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="tab-incidents" onclick="switchTab('tab-incidents')">
+          <span>Incident Logs</span>
+          <span class="tab-badge" id="badgeIncidents">0</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="tab-urls" onclick="switchTab('tab-urls')">
+          <span>URLs</span>
+          <span class="tab-badge" id="badgeUrls">0</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="tab-rules" onclick="switchTab('tab-rules')">
+          <span>Classifications</span>
+          <span class="tab-badge" id="badgeRules">0</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="tab-devices" onclick="switchTab('tab-devices')">
+          <span>Client IPs</span>
+          <span class="tab-badge" id="badgeDevices">0</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="tab-groups" onclick="switchTab('tab-groups')">
+          <span>Groups</span>
+          <span class="tab-badge" id="badgeGroups">0</span>
+        </button>
+        <button type="button" class="nav-tab" id="navAdmins" data-tab="tab-admins" onclick="switchTab('tab-admins')"
+          style="display:none;">
+          <span>Admins</span>
+          <span class="tab-badge" id="badgeAdmins">0</span>
+        </button>
+      </nav>
+
+      <!-- Main View Container -->
+      <div class="view-container">
+
+        <!-- TAB: DATA ANALYTICS (default) -->
+        <div class="tab-pane active" id="tab-analytics" role="tabpanel">
+          <div class="view-title-bar">
+            <div>
+              <div class="view-heading">Data Analytics &amp; Threat Intelligence</div>
+              <div class="view-desc">Multi-variable statistical breakdown of DLP interceptions. Filter by any variable
+                to dynamically recalculate charts and distributions in real time.</div>
+            </div>
+          </div>
+
+          <div class="toolbar" style="margin-bottom: 20px;">
+            <select id="anSite" onchange="renderAnalytics()">
+              <option value="">All AI Platforms</option>
+            </select>
+            <select id="anAction" onchange="renderAnalytics()">
+              <option value="">All Actions</option>
+              <option value="BLOCKED">BLOCKED</option>
+              <option value="MONITORED">MONITORED</option>
+              <option value="PASTE_BLOCKED">PASTE_BLOCKED</option>
+              <option value="DROP_BLOCKED">DROP_BLOCKED</option>
+            </select>
+            <select id="anType" onchange="renderAnalytics()">
+              <option value="">All PII Classifications</option>
+            </select>
+            <input type="text" id="anIp" placeholder="Filter Client IP..." oninput="renderAnalytics()"
+              style="width:160px;">
+            <input type="date" id="anFrom" onchange="renderAnalytics()">
+            <input type="date" id="anTo" onchange="renderAnalytics()">
+            <button class="btn btn-secondary" onclick="resetAnalyticsFilters()">Reset Filters</button>
+            <button class="btn btn-secondary" onclick="load().then(renderAnalytics)">Refresh</button>
+            <div class="spacer"></div>
+            <span id="anFilterSummary" style="color:var(--mandiri-sky-blue); font-size:12px; font-weight:700;"></span>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="num" id="anTopSite" style="font-size:20px; word-break:break-all;">–</div>
+              <div class="label">Top Targeted AI Platform</div>
+              <div id="anTopSiteSub" style="font-size:11px; color:var(--muted); margin-top:4px;">0 incidents</div>
+            </div>
+            <div class="metric-card">
+              <div class="num" id="anTopAction" style="font-size:20px;">–</div>
+              <div class="label">Predominant Action</div>
+              <div id="anTopActionSub" style="font-size:11px; color:var(--muted); margin-top:4px;">0 incidents</div>
+            </div>
+            <div class="metric-card">
+              <div class="num" id="anTopIp" style="font-size:20px; font-family:ui-monospace, monospace;">–</div>
+              <div class="label">Most Active Client IP</div>
+              <div id="anTopIpSub" style="font-size:11px; color:var(--muted); margin-top:4px;">0 incidents</div>
+            </div>
+            <div class="metric-card">
+              <div class="num" id="anTopType" style="font-size:20px;">–</div>
+              <div class="label">Top Sensitive Classification</div>
+              <div id="anTopTypeSub" style="font-size:11px; color:var(--muted); margin-top:4px;">0 detections</div>
+            </div>
+          </div>
+
+          <div class="analytics-grid-2x2">
+            <div class="analytics-card">
+              <div class="analytics-card-header">
+                <div>
+                  <div class="analytics-card-title">Incidents by AI Platform (URL)</div>
+                  <div class="analytics-card-subtitle">Distribution of sensitive data across visited generative AI sites
+                  </div>
+                </div>
+                <span class="tab-badge" id="anSiteCountBadge">0 Sites</span>
+              </div>
+              <div class="analytics-chart-container" id="anSiteChart"></div>
+              <table class="analytics-table-mini">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Platform</th>
+                    <th style="text-align:right;">Incidents</th>
+                    <th style="text-align:right;">Share</th>
+                  </tr>
+                </thead>
+                <tbody id="anSiteTable"></tbody>
+              </table>
+            </div>
+
+            <div class="analytics-card">
+              <div class="analytics-card-header">
+                <div>
+                  <div class="analytics-card-title">Incidents by Enforcement Action</div>
+                  <div class="analytics-card-subtitle">Breakdown of blocking vs monitoring DLP responses</div>
+                </div>
+                <span class="tab-badge" id="anActionCountBadge">4 Actions</span>
+              </div>
+              <div class="analytics-chart-container" id="anActionChart"></div>
+              <table class="analytics-table-mini">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Action Taken</th>
+                    <th style="text-align:right;">Incidents</th>
+                    <th style="text-align:right;">Share</th>
+                  </tr>
+                </thead>
+                <tbody id="anActionTable"></tbody>
+              </table>
+            </div>
+
+            <div class="analytics-card">
+              <div class="analytics-card-header">
+                <div>
+                  <div class="analytics-card-title">Incidents by Client IP Address</div>
+                  <div class="analytics-card-subtitle">Endpoints triggering DLP policy events</div>
+                </div>
+                <span class="tab-badge" id="anIpCountBadge">0 IPs</span>
+              </div>
+              <div class="analytics-chart-container" id="anIpChart"></div>
+              <table class="analytics-table-mini">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Client IP</th>
+                    <th style="text-align:right;">Incidents</th>
+                    <th style="text-align:right;">Share</th>
+                  </tr>
+                </thead>
+                <tbody id="anIpTable"></tbody>
+              </table>
+            </div>
+
+            <div class="analytics-card">
+              <div class="analytics-card-header">
+                <div>
+                  <div class="analytics-card-title">Detections by PII Classification</div>
+                  <div class="analytics-card-subtitle">Specific sensitive data types intercepted in prompts &amp; pastes
+                  </div>
+                </div>
+                <span class="tab-badge" id="anTypeCountBadge">0 Types</span>
+              </div>
+              <div class="analytics-chart-container" id="anTypeChart"></div>
+              <table class="analytics-table-mini">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Classification</th>
+                    <th style="text-align:right;">Detections</th>
+                    <th style="text-align:right;">Share</th>
+                  </tr>
+                </thead>
+                <tbody id="anTypeTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="analytics-card" style="margin-top: 16px;">
+            <div class="analytics-card-header">
+              <div>
+                <div class="analytics-card-title">Incident Activity Timeline &amp; Trend</div>
+                <div class="analytics-card-subtitle">DLP event volume over time across the selected filter criteria
+                </div>
+              </div>
+              <span class="tab-badge" id="anTimelineBadge">Events by Date</span>
+            </div>
+            <div class="analytics-chart-container" id="anTimelineChart" style="min-height: 160px;"></div>
+          </div>
+        </div>
+
+        <!-- TAB: INCIDENT LOGS -->
+        <div class="tab-pane" id="tab-incidents" role="tabpanel">
+          <div class="view-title-bar">
+            <div>
+              <div class="view-heading">Incident Logs &amp; Audit Trail</div>
+              <div class="view-desc">Real-time log of sensitive data intercepted across employee browsers. Cleartext PII
+                is never persisted.</div>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="num" id="cTotal">–</div>
+              <div class="label">Total Interceptions</div>
+            </div>
+            <div class="metric-card">
+              <div class="num" id="cToday">–</div>
+              <div class="label">Interceptions Today</div>
+            </div>
+            <div class="metric-card">
+              <div class="num" id="cTopType">–</div>
+              <div class="label">Top Sensitive Category</div>
+            </div>
+            <div class="metric-card">
+              <div class="num" id="cTopSite">–</div>
+              <div class="label">Top Targeted Platform</div>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <input type="text" id="fSite" placeholder="Target Site (e.g. claude.ai)">
+            <select id="fType">
+              <option value="">All PII Types</option>
+            </select>
+            <select id="fAction">
+              <option value="">All Actions</option>
+              <option value="BLOCKED">BLOCKED</option>
+              <option value="MONITORED">MONITORED</option>
+              <option value="PASTE_BLOCKED">PASTE_BLOCKED</option>
+              <option value="DROP_BLOCKED">DROP_BLOCKED</option>
+            </select>
+            <input type="text" id="fIp" placeholder="Client IP">
+            <input type="date" id="fFrom">
+            <input type="date" id="fTo">
+            <button class="btn btn-primary" id="apply">Apply Filter</button>
+            <button class="btn btn-secondary" id="reset">Reset</button>
+            <button class="btn btn-secondary" id="exportCsv">Export CSV</button>
+            <div class="spacer"></div>
+            <label style="color:var(--muted); font-size:12px; display:flex; align-items:center; gap:6px;">
+              <input type="checkbox" id="autoRefresh" checked> Auto-refresh (10s)
+            </label>
+          </div>
+
+          <div class="table-box">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Target Site</th>
+                  <th>Action Taken</th>
+                  <th>Findings (Masked)</th>
+                  <th>Prompt Length</th>
+                  <th title="Network source observed by the relay; may be a proxy/NAT address, not the endpoint IP">Observed Source IP</th>
+                </tr>
+              </thead>
+              <tbody id="rows">
+                <tr>
+                  <td colspan="6" class="empty-cell">Loading incidents...</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="table-pagination">
+              <div class="pagination-left">
+                <span>Show</span>
+                <select class="pagination-select" id="size_incidents"
+                  onchange="pagers.incidents.setPageSize(this.value)">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="0">All</option>
+                </select>
+                <span>rows per page</span>
+              </div>
+              <div class="pagination-center" id="info_incidents">Showing 0 of 0 entries</div>
+              <div class="pagination-right">
+                <button type="button" class="pagination-btn" id="prev_incidents" onclick="pagers.incidents.prevPage()"
+                  disabled>Previous</button>
+                <span class="pagination-page" id="page_incidents">Page 1 of 1</span>
+                <button type="button" class="pagination-btn" id="next_incidents" onclick="pagers.incidents.nextPage()"
+                  disabled>Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: MONITORED AI PLATFORMS -->
+        <div class="tab-pane" id="tab-urls" role="tabpanel">
+          <div class="view-title-bar">
+            <div>
+              <div class="view-heading">Monitored AI Platforms</div>
+              <div class="view-desc">Enforced target sites across all installed extensions. Policy updates are broadcast
+                immediately.</div>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <input type="text" id="newUrlPattern" placeholder="example.com or https://example.com/*"
+              style="min-width:320px;">
+            <button class="btn btn-primary" id="addUrl">Add Monitored Site</button>
+          </div>
+
+          <div id="fb_urls"></div>
+
+          <div class="table-box">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Match Pattern</th>
+                  <th>Enforcement Status</th>
+                  <th>Date Added</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="urlRows">
+                <tr>
+                  <td colspan="4" class="empty-cell">Loading monitored URLs...</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="table-pagination">
+              <div class="pagination-left">
+                <span>Show</span>
+                <select class="pagination-select" id="size_urls" onchange="pagers.urls.setPageSize(this.value)">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="0">All</option>
+                </select>
+                <span>rows per page</span>
+              </div>
+              <div class="pagination-center" id="info_urls">Showing 0 of 0 entries</div>
+              <div class="pagination-right">
+                <button type="button" class="pagination-btn" id="prev_urls" onclick="pagers.urls.prevPage()"
+                  disabled>Previous</button>
+                <span class="pagination-page" id="page_urls">Page 1 of 1</span>
+                <button type="button" class="pagination-btn" id="next_urls" onclick="pagers.urls.nextPage()"
+                  disabled>Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: PII DETECTION POLICIES -->
+        <div class="tab-pane" id="tab-rules" role="tabpanel">
+          <div class="view-title-bar">
+            <div>
+              <div class="view-heading">PII Detection Policies</div>
+              <div class="view-desc">Configured regex patterns, checksum validators, and enforcement actions. Changes
+                push to endpoints in real-time.</div>
+            </div>
+          </div>
+
+          <div id="fb_rules"></div>
+
+          <div class="toolbar" style="flex-wrap: wrap;">
+            <input type="text" id="rType" placeholder="Type Code (e.g. PASSPORT)" style="width:140px;">
+            <input type="text" id="rLabel" placeholder="Label Description" style="width:170px;">
+            <input type="text" id="rPattern" placeholder="Regex Pattern (no slashes)" style="min-width:240px; flex:1;">
+            <input type="text" id="rFlags" placeholder="Flags" value="g" style="width:50px;">
+            <select id="rValidator">
+              <option value="none">Validator: None</option>
+              <option value="luhn">Validator: Luhn (Credit Card)</option>
+              <option value="nik">Validator: NIK (Indonesian ID)</option>
+            </select>
+            <select id="rKeyMode">
+              <option value="digits">KeyMode: Digits Only</option>
+              <option value="text">KeyMode: Standard Text</option>
+            </select>
+            <select id="rAction">
+              <option value="block">Action: Block (Enforce)</option>
+              <option value="monitor">Action: Monitor (Audit Only)</option>
+            </select>
+            <button class="btn btn-primary" id="addRule">Add Policy</button>
+          </div>
+
+          <div class="table-box">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Label</th>
+                  <th>Pattern</th>
+                  <th>Validator</th>
+                  <th>Action</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ruleRows">
+                <tr>
+                  <td colspan="7" class="empty-cell">Loading rules...</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="table-pagination">
+              <div class="pagination-left">
+                <span>Show</span>
+                <select class="pagination-select" id="size_rules" onchange="pagers.rules.setPageSize(this.value)">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="0">All</option>
+                </select>
+                <span>rows per page</span>
+              </div>
+              <div class="pagination-center" id="info_rules">Showing 0 of 0 entries</div>
+              <div class="pagination-right">
+                <button type="button" class="pagination-btn" id="prev_rules" onclick="pagers.rules.prevPage()"
+                  disabled>Previous</button>
+                <span class="pagination-page" id="page_rules">Page 1 of 1</span>
+                <button type="button" class="pagination-btn" id="next_rules" onclick="pagers.rules.nextPage()"
+                  disabled>Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: CONNECTED PROTECTED DEVICES -->
+        <div class="tab-pane" id="tab-devices" role="tabpanel">
+          <div class="view-title-bar">
+            <div>
+              <div class="view-heading">Connected Protected Devices</div>
+              <div class="view-desc">Active client endpoints synchronizing policies with the relay server. Every device
+                is in General (no exemption) until it is added to a group; click a group to open it in Group Management.
+              </div>
+            </div>
+          </div>
+
+          <div id="fb_devices"></div>
+
+          <div class="table-box">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Client IP</th>
+                  <th>First Seen</th>
+                  <th>Last Seen</th>
+                  <th>Total Syncs</th>
+                  <th>Group</th>
+                </tr>
+              </thead>
+              <tbody id="deviceRows">
+                <tr>
+                  <td colspan="5" class="empty-cell">Loading devices...</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="table-pagination">
+              <div class="pagination-left">
+                <span>Show</span>
+                <select class="pagination-select" id="size_devices" onchange="pagers.devices.setPageSize(this.value)">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="0">All</option>
+                </select>
+                <span>rows per page</span>
+              </div>
+              <div class="pagination-center" id="info_devices">Showing 0 of 0 entries</div>
+              <div class="pagination-right">
+                <button type="button" class="pagination-btn" id="prev_devices" onclick="pagers.devices.prevPage()"
+                  disabled>Previous</button>
+                <span class="pagination-page" id="page_devices">Page 1 of 1</span>
+                <button type="button" class="pagination-btn" id="next_devices" onclick="pagers.devices.nextPage()"
+                  disabled>Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: GROUP MANAGEMENT -->
+        <div class="tab-pane" id="tab-groups" role="tabpanel">
+          <div class="view-title-bar">
+            <div>
+              <div class="view-heading">Group Management</div>
+              <div class="view-desc">A group is an exemption preset. Add a Client IP to a group to apply its exemptions
+                (activity is still logged). Every device stays in General (no exemption) until it is added to one or
+                more groups.</div>
+            </div>
+            <button class="btn btn-primary" onclick="openGroupEdit(null)">+ New Group</button>
+          </div>
+
+          <div id="fb_groups"></div>
+
+          <div class="table-box">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Group Name</th>
+                  <th>Exempted URL(s)</th>
+                  <th>Exempted Classification</th>
+                  <th>Created At</th>
+                  <th>Total Member</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="groupRows">
+                <tr>
+                  <td colspan="6" class="empty-cell">Loading groups...</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="table-pagination">
+              <div class="pagination-left">
+                <span>Show</span>
+                <select class="pagination-select" id="size_groups" onchange="pagers.groups.setPageSize(this.value)">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="0">All</option>
+                </select>
+                <span>rows per page</span>
+              </div>
+              <div class="pagination-center" id="info_groups">Showing 0 of 0 entries</div>
+              <div class="pagination-right">
+                <button type="button" class="pagination-btn" id="prev_groups" onclick="pagers.groups.prevPage()"
+                  disabled>Previous</button>
+                <span class="pagination-page" id="page_groups">Page 1 of 1</span>
+                <button type="button" class="pagination-btn" id="next_groups" onclick="pagers.groups.nextPage()"
+                  disabled>Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: ADMINS (superadmin only — enforced server-side too) -->
+        <div class="tab-pane" id="tab-admins" role="tabpanel">
+          <div class="view-title-bar">
+            <div>
+              <div class="view-heading">Console Administrators</div>
+              <div class="view-desc">Only the superadmin can add or remove administrators. Every account can change its
+                own password from the header.</div>
+            </div>
+            <button class="btn btn-primary" onclick="openAddAdmin()">+ Add Admin</button>
+          </div>
+
+          <div id="fb_admins"></div>
+
+          <div class="table-box">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Role</th>
+                  <th>Created</th>
+                  <th>Created By</th>
+                  <th>Last Login</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminRows">
+                <tr>
+                  <td colspan="6" class="empty-cell">Loading administrators...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div> <!-- /view-container -->
+    </div> <!-- /app-shell -->
+
+    <footer class="app-footer">
+      <div>CISO Office Group · DPromptShield DLP System</div>
+      <div>Raw prompts and cleartext PII are never persisted — only masked tokens (e.g., 31***********01)</div>
+    </footer>
+  </div>
+
+  <!-- Edit Monitored URL Modal -->
+  <div id="modalEditUrl" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">Edit Monitored AI Site</div>
+        <button class="modal-close" onclick="closeModals()">X</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editUrlId">
+        <div>
+          <label class="modal-label">Match Pattern</label>
+          <input type="text" id="editUrlPattern" class="modal-input" placeholder="e.g. https://kimi.ai/*">
+          <div class="modal-tip">Subdomains (e.g. www.) and wildcard variants are supported automatically.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        <button id="saveUrlEdit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit PII Rule Modal -->
+  <div id="modalEditRule" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <div class="modal-title">Edit PII Detection Policy</div>
+        <button class="modal-close" onclick="closeModals()">X</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editRuleId">
+        <div class="modal-grid">
+          <div>
+            <label class="modal-label">Policy Type Code</label>
+            <input type="text" id="editRuleType" class="modal-input" placeholder="e.g. NIK">
+          </div>
+          <div>
+            <label class="modal-label">Display Label</label>
+            <input type="text" id="editRuleLabel" class="modal-input" placeholder="e.g. Indonesian NIK">
+          </div>
+        </div>
+        <div>
+          <label class="modal-label">Regular Expression Pattern (No Slashes)</label>
+          <input type="text" id="editRulePattern" class="modal-input" placeholder="e.g. (?<!\d)\d{16}(?!\d)">
+        </div>
+        <div class="modal-grid-3">
+          <div>
+            <label class="modal-label">Flags</label>
+            <input type="text" id="editRuleFlags" class="modal-input" value="g">
+          </div>
+          <div>
+            <label class="modal-label">Validator</label>
+            <select id="editRuleValidator" class="modal-input">
+              <option value="none">Validator: None</option>
+              <option value="luhn">Validator: Luhn (Credit Card)</option>
+              <option value="nik">Validator: NIK (Indonesian ID)</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label">Key Mode</label>
+            <select id="editRuleKeyMode" class="modal-input">
+              <option value="digits">KeyMode: Digits Only</option>
+              <option value="text">KeyMode: Standard Text</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="modal-label">Enforcement Action</label>
+          <select id="editRuleAction" class="modal-input">
+            <option value="block">Block (Prevent prompt send and show alert)</option>
+            <option value="monitor">Monitor (Allow prompt send, log to incident audit)</option>
+          </select>
+          <div class="modal-tip">When set to Monitor, users can submit prompts containing this PII without being
+            blocked, but incidents are still logged in the audit trail.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        <button id="saveRuleEdit" class="btn btn-primary">Update Policy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Detail Modal -->
+  <div id="modalGroupDetail" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog modal-dialog-xl">
+      <div class="modal-header">
+        <div class="modal-title">Group Detail: <span id="gdName" style="color:var(--mandiri-yellow);"></span> <span
+            id="gdSystemTag" class="tag" style="display:none;">Default</span></div>
+        <button class="modal-close" onclick="closeModal('modalGroupDetail')">X</button>
+      </div>
+      <div class="modal-body">
+        <div class="gd-grid">
+          <div><span class="modal-label">Exempted URL(s)</span>
+            <div id="gdUrls"></div>
+          </div>
+          <div><span class="modal-label">Exempted Classification</span>
+            <div id="gdTypes"></div>
+          </div>
+          <div><span class="modal-label">Created</span>
+            <div id="gdCreated" class="gd-text"></div>
+          </div>
+          <div><span class="modal-label">Total Member</span>
+            <div id="gdCount" class="gd-text"></div>
+          </div>
+        </div>
+        <div class="gd-actions">
+          <button type="button" class="btn btn-secondary" id="gdEdit"
+            onclick="openGroupEdit(gd.data.group)">Edit</button>
+          <button type="button" class="btn btn-primary" id="gdAdd" onclick="openAddMember()">Add member</button>
+          <button type="button" class="btn btn-danger" id="gdDelete" onclick="deleteGroup()">Delete</button>
+        </div>
+        <div id="gdSysNote" class="modal-tip" style="display:none;">General is the default group: it has no exemptions
+          and its membership is automatic. A device is in General until it is added to another group, so it cannot be
+          edited, given members, or deleted.</div>
+        <div class="gd-members-head">
+          <span class="modal-label" style="margin:0;">Members</span>
+          <input type="text" id="gdMemberSearch" class="modal-input gd-search" placeholder="Search member IP..."
+            autocomplete="off" oninput="gd.memberQuery = this.value; renderMembers();">
+        </div>
+        <div class="gd-members">
+          <table class="data-table">
+            <thead id="gdMemberHead"></thead>
+            <tbody id="gdMemberRows"></tbody>
+          </table>
+        </div>
+        <div id="gdTruncNote" class="modal-tip" style="display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modalGroupDetail')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Create / Edit Modal -->
+  <div id="modalGroupEdit" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <div class="modal-title" id="geTitle">New Group</div>
+        <button class="modal-close" onclick="closeModal('modalGroupEdit')">X</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="geId">
+        <div id="geError" class="modal-error"></div>
+        <div>
+          <label class="modal-label">Group Name</label>
+          <input type="text" id="geName" class="modal-input" maxlength="100" placeholder="e.g. VIP">
+        </div>
+        <div>
+          <label class="modal-label">Exempted URL(s)</label>
+          <label class="check-all"><input type="checkbox" id="geAllUrls" onchange="syncExemptInputs()"> Exempt all
+            URLs</label>
+          <div class="check-list" id="geUrlList"></div>
+          <div class="modal-tip">Pick the monitored AI platforms this group may use without being blocked.</div>
+        </div>
+        <div>
+          <label class="modal-label">Exempted Classification</label>
+          <label class="check-all"><input type="checkbox" id="geAllTypes" onchange="syncExemptInputs()"> Exempt all
+            classifications</label>
+          <div class="check-list" id="geTypeList"></div>
+          <div class="modal-tip">An exemption applies where a URL AND a classification above both match.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modalGroupEdit')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveGroup()">Save Group</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Add Member Modal -->
+  <div id="modalGroupAddMember" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">Add Member</div>
+        <button class="modal-close" onclick="closeModal('modalGroupAddMember')">X</button>
+      </div>
+      <div class="modal-body">
+        <div id="amError" class="modal-error"></div>
+        <div>
+          <label class="modal-label">Client IP address(es)</label>
+          <textarea id="amIps" class="modal-input"
+            placeholder="One per line, e.g.&#10;192.168.1.101&#10;192.168.1.102"></textarea>
+          <div class="modal-tip">Separate with new lines, spaces or commas. An IP can belong to several groups; it
+            leaves General once added.</div>
+        </div>
+        <div>
+          <label class="modal-label">Known devices (click to add)</label>
+          <div id="amKnown"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modalGroupAddMember')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitAddMember()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Admin Modal (superadmin only) -->
+  <div id="modalAddAdmin" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">Add Administrator</div>
+        <button class="modal-close" onclick="closeModals()">X</button>
+      </div>
+      <div class="modal-body">
+        <div id="addAdminError" class="modal-error" role="alert"></div>
+        <div>
+          <label class="modal-label" for="newAdminUser">Username</label>
+          <input type="text" id="newAdminUser" class="modal-input" autocomplete="off" autocapitalize="off"
+            spellcheck="false" placeholder="e.g. jane.doe">
+          <div class="modal-tip">3–50 characters: letters, numbers, dot, dash, underscore.</div>
+        </div>
+        <div>
+          <label class="modal-label" for="newAdminPass">Password</label>
+          <input type="password" id="newAdminPass" class="modal-input" autocomplete="new-password">
+          <div class="modal-tip">At least 8 characters with a letter and a number. The admin can change it after signing
+            in.</div>
+        </div>
+        <div>
+          <label class="modal-label" for="newAdminPass2">Confirm Password</label>
+          <input type="password" id="newAdminPass2" class="modal-input" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        <button id="saveAddAdmin" class="btn btn-primary" onclick="addAdmin()">Create Admin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Own Password Modal (every account) -->
+  <div id="modalChangePw" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">Change My Password</div>
+        <button class="modal-close" onclick="closeModals()">X</button>
+      </div>
+      <div class="modal-body">
+        <div id="changePwMsg" class="modal-error" role="alert"></div>
+        <div>
+          <label class="modal-label" for="cpCurrent">Current Password</label>
+          <input type="password" id="cpCurrent" class="modal-input" autocomplete="current-password">
+        </div>
+        <div>
+          <label class="modal-label" for="cpNew">New Password</label>
+          <input type="password" id="cpNew" class="modal-input" autocomplete="new-password">
+          <div class="modal-tip">At least 8 characters with a letter and a number.</div>
+        </div>
+        <div>
+          <label class="modal-label" for="cpNew2">Confirm New Password</label>
+          <input type="password" id="cpNew2" class="modal-input" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        <button id="saveChangePw" class="btn btn-primary" onclick="changePassword()">Update Password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Idle sign-out warning (shown shortly before the server ends an inactive session) -->
+  <div id="modalIdleWarning" class="modal-backdrop" style="display:none;" role="alertdialog" aria-modal="true"
+    aria-labelledby="idleTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title" id="idleTitle">Are you still there?</div>
+      </div>
+      <div class="modal-body">
+        <div class="gd-text">For security, you will be signed out in <strong id="idleCountdown"
+            style="color:var(--mandiri-yellow);">60</strong> seconds because there has been no activity.</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="idleSignOut(false)">Sign out now</button>
+        <button type="button" class="btn btn-primary" id="idleStay" onclick="stayLoggedIn()">Stay signed in</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Any API call answered with 401 means the session is gone (expired, signed
+    // out elsewhere, or this admin was removed) — send the browser to the login page.
+    const _origFetch = window.fetch.bind(window);
+    window.fetch = async (...args) => {
+      const res = await _origFetch(...args);
+      if (res.status === 401) {
+        let idle = false;
+        try { idle = (await res.clone().json()).reason === "idle"; } catch (_) { }
+        window.location.replace(idle ? "/login.html?expired=1" : "/login.html");
+      }
+      return res;
+    };
+
+    const API = "/api/pii-logs";
+    let timer = null;
+    let cachedIncidents = [];
+    let cachedRules = [];
+    let cachedUrls = [];
+    let cachedDevices = [];
+    let cachedGroups = [];
+
+    function qs(id) { return document.getElementById(id); }
+
+    // ---------------------------------------------------------------------------
+    // Tab Navigation (sidebar)
+    // ---------------------------------------------------------------------------
+    function switchTab(tabId) {
+      // The Admins tab only exists for the superadmin (the API enforces this too).
+      if (tabId === "tab-admins" && (!currentUser || currentUser.role !== "superadmin")) tabId = "tab-analytics";
+      document.querySelectorAll(".tab-pane").forEach(pane => {
+        pane.classList.toggle("active", pane.id === tabId);
+      });
+      document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.classList.toggle("active", tab.getAttribute("data-tab") === tabId);
+      });
+      if (tabId === "tab-analytics") {
+        populateAnalyticsFilters();
+        renderAnalytics();
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Table Pagination & Row Management Manager
+    // ---------------------------------------------------------------------------
+    class TablePagination {
+      constructor(name, onPageChange, defaultSize = 10) {
+        this.name = name;
+        this.onPageChange = onPageChange;
+        this.pageSize = defaultSize;
+        this.currentPage = 1;
+        this.total = 0;
+      }
+
+      setPageSize(size) {
+        this.pageSize = Number(size);
+        this.currentPage = 1;
+        this.onPageChange();
+      }
+
+      prevPage() {
+        if (this.currentPage > 1) {
+          this.currentPage--;
+          this.onPageChange();
+        }
+      }
+
+      nextPage() {
+        const maxPage = this.pageSize === 0 ? 1 : Math.max(1, Math.ceil(this.total / this.pageSize));
+        if (this.currentPage < maxPage) {
+          this.currentPage++;
+          this.onPageChange();
+        }
+      }
+
+      slice(items) {
+        this.total = (items || []).length;
+        if (this.pageSize === 0) {
+          this.currentPage = 1;
+          this.updateUI(this.total ? 1 : 0, this.total, this.total, 1, 1);
+          return items || [];
+        }
+
+        const maxPage = Math.max(1, Math.ceil(this.total / this.pageSize));
+        if (this.currentPage > maxPage) this.currentPage = maxPage;
+        if (this.currentPage < 1) this.currentPage = 1;
+
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = Math.min(start + this.pageSize, this.total);
+
+        this.updateUI(this.total ? start + 1 : 0, end, this.total, this.currentPage, maxPage);
+        return (items || []).slice(start, end);
+      }
+
+      updateUI(start, end, total, page, maxPage) {
+        const infoEl = qs(`info_${this.name}`);
+        const pageEl = qs(`page_${this.name}`);
+        const prevBtn = qs(`prev_${this.name}`);
+        const nextBtn = qs(`next_${this.name}`);
+
+        if (infoEl) {
+          infoEl.textContent = total === 0
+            ? "Showing 0 of 0 entries"
+            : `Showing ${start}-${end} of ${total} entries`;
+        }
+        if (pageEl) pageEl.textContent = `Page ${page} of ${maxPage}`;
+        if (prevBtn) prevBtn.disabled = page <= 1;
+        if (nextBtn) nextBtn.disabled = page >= maxPage;
+      }
+    }
+
+    const pagers = {
+      incidents: new TablePagination("incidents", () => renderRows()),
+      urls: new TablePagination("urls", () => renderUrls()),
+      rules: new TablePagination("rules", () => filterRules()),
+      devices: new TablePagination("devices", () => filterDevices()),
+      groups: new TablePagination("groups", () => renderGroups()),
+    };
+
+    // ---------------------------------------------------------------------------
+    // Table filter bars: URLs, Classifications, Client IPs, Groups, Admins.
+    // Pick one column (or All columns), type a value, optionally require an exact
+    // match. Only stored values are searchable; computed figures (total syncs,
+    // total members) are deliberately not. Incident Logs keeps its own filters.
+    // ---------------------------------------------------------------------------
+    const filterDefs = {};
+    const filterState = {};
+
+    function dateVals(v) {
+      if (!v) return [];
+      const d = new Date(v);
+      if (isNaN(d)) return [String(v)];
+      const p2 = (n) => String(n).padStart(2, "0");
+      // Match what is shown on screen, plus an ISO day (YYYY-MM-DD) for exact date search.
+      return [d.toLocaleString(), d.toLocaleDateString(), `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`];
+    }
+
+    function registerFilter(key, noun, columns, rerender) {
+      filterDefs[key] = { noun, columns, rerender };
+      filterState[key] = { col: "", q: "", exact: false };
+      const host = qs(`fb_${key}`);
+      if (!host) return;
+      host.innerHTML = `
+    <div class="toolbar filter-bar">
+      <span class="filter-label">Filter</span>
+      <select id="fcol_${key}">
+        <option value="">All columns</option>
+        ${columns.map(c => `<option value="${c.key}">${c.label}</option>`).join("")}
+      </select>
+      <input type="text" id="fq_${key}" placeholder="Search..." autocomplete="off">
+      <label class="filter-exact"><input type="checkbox" id="fex_${key}"> Exact match</label>
+      <button type="button" class="btn btn-secondary" id="fclr_${key}">Clear</button>
+      <span class="filter-count" id="fcount_${key}"></span>
+    </div>`;
+      const onChange = () => {
+        filterState[key] = { col: qs(`fcol_${key}`).value, q: qs(`fq_${key}`).value, exact: qs(`fex_${key}`).checked };
+        if (pagers[key]) pagers[key].currentPage = 1;
+        rerender();
+      };
+      qs(`fcol_${key}`).onchange = onChange;
+      qs(`fq_${key}`).oninput = onChange;
+      qs(`fex_${key}`).onchange = onChange;
+      qs(`fclr_${key}`).onclick = () => resetFilter(key);
+    }
+
+    function resetFilter(key, rerender = true) {
+      filterState[key] = { col: "", q: "", exact: false };
+      if (qs(`fcol_${key}`)) qs(`fcol_${key}`).value = "";
+      if (qs(`fq_${key}`)) qs(`fq_${key}`).value = "";
+      if (qs(`fex_${key}`)) qs(`fex_${key}`).checked = false;
+      if (pagers[key]) pagers[key].currentPage = 1;
+      if (rerender && filterDefs[key]) filterDefs[key].rerender();
+    }
+
+    function applyFilter(key, items) {
+      const def = filterDefs[key], st = filterState[key];
+      const list = items || [];
+      const q = (st?.q || "").trim().toLowerCase();
+      let out = list;
+      if (def && q) {
+        const cols = st.col ? def.columns.filter(c => c.key === st.col) : def.columns;
+        out = list.filter(item => cols.some(c =>
+          [].concat(c.get(item) ?? [])
+            .map(v => String(v ?? "").trim().toLowerCase())
+            .filter(Boolean)
+            .some(v => st.exact ? v === q : v.includes(q))
+        ));
+      }
+      const cEl = qs(`fcount_${key}`);
+      if (cEl && def) cEl.textContent = q ? `Showing ${out.length} of ${list.length} ${def.noun}` : `${list.length} ${def.noun}`;
+      return out;
+    }
+
+    function ipKey(ip) {
+      const s = String(ip || "").trim().toLowerCase();
+      return ["127.0.0.1", "::1", "localhost"].includes(s) ? "loopback" : s;
+    }
+    function groupUrlValues(g) { return g.isSystem ? ["None"] : (g.exemptAllUrls ? ["All URLs"] : g.exemptUrls); }
+    function groupTypeValues(g) { return g.isSystem ? ["None"] : (g.exemptAllTypes ? ["All classifications"] : g.exemptTypes); }
+
+    function initFilters() {
+      registerFilter("urls", "sites", [
+        { key: "pattern", label: "Match Pattern", get: u => u.Pattern },
+        { key: "status", label: "Enforcement Status", get: u => u.Enabled ? "Active" : "Inactive" },
+        { key: "added", label: "Date Added", get: u => dateVals(u.CreatedAt) },
+      ], () => renderUrls());
+
+      registerFilter("rules", "policies", [
+        { key: "type", label: "Type", get: r => r.Type },
+        { key: "label", label: "Label", get: r => r.Label },
+        { key: "pattern", label: "Pattern", get: r => r.Pattern },
+        { key: "validator", label: "Validator", get: r => r.Validator },
+        { key: "action", label: "Action", get: r => r.Action || "block" },
+        { key: "status", label: "Status", get: r => r.Enabled ? "Active" : "Inactive" },
+      ], () => filterRules());
+
+      registerFilter("devices", "devices", [
+        { key: "ip", label: "Client IP", get: d => d.ClientIp },
+        { key: "first", label: "First Seen", get: d => dateVals(d.FirstSeen) },
+        { key: "last", label: "Last Seen", get: d => dateVals(d.LastSeen) },
+        { key: "group", label: "Group", get: d => (d.groups || []).map(g => g.name) },
+      ], () => filterDevices());
+
+      registerFilter("groups", "groups", [
+        { key: "name", label: "Group Name", get: g => g.name },
+        { key: "urls", label: "Exempted URL(s)", get: g => groupUrlValues(g) },
+        { key: "types", label: "Exempted Classification", get: g => groupTypeValues(g) },
+        { key: "created", label: "Created At", get: g => dateVals(g.createdAt) },
+      ], () => renderGroups());
+
+      registerFilter("admins", "administrators", [
+        { key: "user", label: "Username", get: a => a.Username },
+        { key: "role", label: "Role", get: a => a.Role === "superadmin" ? ["Super Admin", "superadmin"] : ["Admin", "admin"] },
+        { key: "created", label: "Created", get: a => dateVals(a.CreatedAt) },
+        { key: "by", label: "Created By", get: a => a.CreatedBy },
+        { key: "login", label: "Last Login", get: a => a.LastLoginAt ? dateVals(a.LastLoginAt) : ["Never"] },
+      ], () => renderAdmins());
+    }
+    initFilters();
+
+    // ---------------------------------------------------------------------------
+    // Modals
+    // ---------------------------------------------------------------------------
+    const MODAL_IDS = ["modalEditUrl", "modalEditRule", "modalGroupDetail", "modalGroupEdit", "modalGroupAddMember", "modalAddAdmin", "modalChangePw"];
+
+    function closeModal(id) {
+      const el = qs(id);
+      if (el) el.style.display = "none";
+    }
+    function closeModals() { MODAL_IDS.forEach(closeModal); }
+
+    // Escape closes only the top-most open popup (e.g. Add member over Group detail).
+    function closeTopModal() {
+      const open = [...document.querySelectorAll(".modal-backdrop")].filter(m => m.style.display !== "none" && m.id !== "modalIdleWarning");
+      if (open.length) open[open.length - 1].style.display = "none";
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeTopModal();
+    });
+
+    MODAL_IDS.forEach((id) => {
+      const el = qs(id);
+      if (el) el.addEventListener("click", (e) => { if (e.target === el) closeModal(id); });
+    });
+
+    function buildQuery() {
+      const p = new URLSearchParams();
+      p.set("limit", "300");
+      if (qs("fSite").value) p.set("site", qs("fSite").value.trim());
+      if (qs("fType").value) p.set("type", qs("fType").value);
+      if (qs("fAction").value) p.set("action", qs("fAction").value);
+      if (qs("fIp").value) p.set("ip", qs("fIp").value.trim());
+      if (qs("fFrom").value) p.set("from", qs("fFrom").value);
+      if (qs("fTo").value) p.set("to", qs("fTo").value + "T23:59:59");
+      return p.toString();
+    }
+
+    // Null-safe: the status elements live in a hidden header block, and a missing
+    // element must never break incident loading.
+    function setStatus(ok) {
+      const dot = qs("statusDot"), txt = qs("statusText");
+      if (dot) dot.className = "status-dot " + (ok ? "ok" : "down");
+      if (txt) txt.textContent = ok ? "Relay Connected (SSE Active)" : "Relay Unreachable — Start Server";
+    }
+
+    function renderCards(rows) {
+      qs("cTotal").textContent = rows.length;
+      const todayStr = new Date().toDateString();
+      qs("cToday").textContent = rows.filter(r => new Date(r.EventTs).toDateString() === todayStr).length;
+
+      const typeCounts = {}, siteCounts = {};
+      for (const r of rows) {
+        for (const f of r.findings || []) typeCounts[f.type] = (typeCounts[f.type] || 0) + 1;
+        if (r.SiteHost) siteCounts[r.SiteHost] = (siteCounts[r.SiteHost] || 0) + 1;
+      }
+      const top = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1])[0];
+      const topType = top(typeCounts), topSite = top(siteCounts);
+      qs("cTopType").textContent = topType ? `${topType[0]} (${topType[1]})` : "–";
+      qs("cTopSite").textContent = topSite ? `${topSite[0]} (${topSite[1]})` : "–";
+    }
+
+    function renderRows(rows) {
+      if (rows !== undefined) cachedIncidents = rows || [];
+      qs("badgeIncidents").textContent = cachedIncidents.length;
+      const tbody = qs("rows");
+      const pagedRows = pagers.incidents.slice(cachedIncidents);
+      if (!pagedRows.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">No incidents match the active filters.</td></tr>';
+        return;
+      }
+      const ACTION_COLORS = {
+        BLOCKED: { bg: "rgba(234, 114, 0, 0.16)", color: "#FF9838", border: "rgba(234, 114, 0, 0.45)" },
+        PASTE_BLOCKED: { bg: "rgba(255, 183, 0, 0.16)", color: "#FFC933", border: "rgba(255, 183, 0, 0.45)" },
+        DROP_BLOCKED: { bg: "rgba(103, 178, 232, 0.16)", color: "#A3D4F7", border: "rgba(103, 178, 232, 0.45)" },
+        MONITORED: { bg: "rgba(103, 178, 232, 0.16)", color: "#67B2E8", border: "rgba(103, 178, 232, 0.45)" },
+      };
+      tbody.innerHTML = pagedRows.map(r => {
+        const tags = (r.findings || []).map(f =>
+          `<span class="tag">${f.type}</span><span class="masked">${f.masked}</span>`
+        ).join(" ");
+        const time = new Date(r.EventTs).toLocaleString();
+        const ac = ACTION_COLORS[r.ActionTaken] || ACTION_COLORS.BLOCKED;
+        const actionBadge = `<span class="status-pill-badge" style="background:${ac.bg};color:${ac.color};border:1px solid ${ac.border};">${r.ActionTaken}</span>`;
+        const ipMeta = r.ipMeta || {};
+        const ipLabel = r.ClientIp
+          ? `${r.ClientIp}${ipMeta.isLoopback ? " (loopback; not endpoint IP)" : ""}`
+          : "Unavailable";
+        const ipTitle = `Source: ${ipMeta.source || "unknown"}; type: ${ipMeta.type || "unknown"}; confidence: ${ipMeta.confidence || "unavailable"}`;
+        return `<tr>
+      <td>${time}</td>
+      <td class="site-title">${r.SiteHost || "–"}</td>
+      <td>${actionBadge}</td>
+      <td>${tags}</td>
+      <td>${r.PromptLength ?? "–"}</td>
+      <td class="ip-code" title="${escapeHtml(ipTitle)}">${escapeHtml(ipLabel)}</td>
+    </tr>`;
+      }).join("");
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(`${API}?${buildQuery()}`);
+        if (!res.ok) throw new Error("bad response");
+        const data = await res.json();
+        setStatus(true);
+        cachedIncidents = data.rows || [];
+        renderCards(cachedIncidents);
+        renderRows(cachedIncidents);
+        // Update analytics badge and refresh if tab is visible
+        const badge = qs("badgeAnalytics");
+        if (badge) badge.textContent = cachedIncidents.length;
+        populateAnalyticsFilters();
+        const anTab = qs("tab-analytics");
+        if (anTab && anTab.classList.contains("active")) renderAnalytics();
+      } catch (e) {
+        setStatus(false);
+        qs("rows").innerHTML = '<tr><td colspan="6" class="error-cell">Could not reach relay server at ' + API + '</td></tr>';
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Data Analytics & Threat Intelligence Engine
+    // ---------------------------------------------------------------------------
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function populateAnalyticsFilters() {
+      const siteEl = qs("anSite");
+      const typeEl = qs("anType");
+      if (!siteEl || !typeEl) return;
+
+      const prevSite = siteEl.value;
+      const prevType = typeEl.value;
+
+      const sites = new Set();
+      (cachedIncidents || []).forEach(r => { if (r.SiteHost) sites.add(r.SiteHost); });
+      (cachedUrls || []).forEach(u => {
+        if (u.Pattern) {
+          const h = u.Pattern.replace(/^https?:\/\//i, "").replace(/[\/\*].*$/, "").replace(/^\*\./, "");
+          if (h) sites.add(h);
+        }
+      });
+      const sortedSites = Array.from(sites).sort();
+      siteEl.innerHTML = '<option value="">All AI Platforms</option>' +
+        sortedSites.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+      if (sortedSites.includes(prevSite)) siteEl.value = prevSite;
+
+      const types = new Set();
+      (cachedIncidents || []).forEach(r => { (r.findings || []).forEach(f => { if (f.type) types.add(f.type); }); });
+      (cachedRules || []).forEach(rule => { if (rule.Type) types.add(rule.Type); });
+      const sortedTypes = Array.from(types).sort();
+      typeEl.innerHTML = '<option value="">All PII Classifications</option>' +
+        sortedTypes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+      if (sortedTypes.includes(prevType)) typeEl.value = prevType;
+    }
+
+    function getFilteredAnalyticsIncidents() {
+      const fSite = (qs("anSite")?.value || "").trim().toLowerCase();
+      const fAction = (qs("anAction")?.value || "").trim().toUpperCase();
+      const fType = (qs("anType")?.value || "").trim().toUpperCase();
+      const fIp = (qs("anIp")?.value || "").trim().toLowerCase();
+      const fFrom = qs("anFrom")?.value;
+      const fTo = qs("anTo")?.value;
+
+      const fromTs = fFrom ? new Date(fFrom + "T00:00:00").getTime() : 0;
+      const toTs = fTo ? new Date(fTo + "T23:59:59.999").getTime() : Infinity;
+
+      return (cachedIncidents || []).filter(r => {
+        if (fSite && !(r.SiteHost || "").toLowerCase().includes(fSite)) return false;
+        if (fAction && (r.ActionTaken || "").toUpperCase() !== fAction) return false;
+        if (fIp && !(r.ClientIp || "").toLowerCase().includes(fIp)) return false;
+        if (fType) {
+          const hit = (r.findings || []).some(f => (f.type || "").toUpperCase() === fType);
+          if (!hit) return false;
+        }
+        if (fromTs > 0 || toTs < Infinity) {
+          const ts = new Date(r.EventTs).getTime();
+          if (ts < fromTs || ts > toTs) return false;
+        }
+        return true;
+      });
+    }
+
+    function setAnalyticsFilter(field, value) {
+      const map = { site: "anSite", action: "anAction", type: "anType", ip: "anIp" };
+      const el = qs(map[field]);
+      if (el) el.value = value;
+      renderAnalytics();
+    }
+
+    function resetAnalyticsFilters() {
+      ["anSite", "anAction", "anType", "anFrom", "anTo"].forEach(id => { const el = qs(id); if (el) el.value = ""; });
+      const ipEl = qs("anIp"); if (ipEl) ipEl.value = "";
+      renderAnalytics();
+    }
+
+    function renderAnalyticsBarChart(containerId, items, total, filterKey) {
+      const container = qs(containerId);
+      if (!container) return;
+      if (!items.length || total === 0) {
+        container.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:32px 0;">No data for active filters.</div>';
+        return;
+      }
+      const colors = ["#FFB700", "#0060B2", "#EA7200", "#67B2E8", "#B6B8BA"];
+      const top5 = items.slice(0, 5);
+      const maxVal = Math.max(...top5.map(i => i.count), 1);
+      container.innerHTML = top5.map((item, idx) => {
+        const pct = ((item.count / total) * 100).toFixed(1);
+        const width = Math.max(4, Math.round((item.count / maxVal) * 100));
+        const color = item.color || colors[idx % colors.length];
+        const safe = escapeHtml(item.name);
+        return `
+      <div class="analytics-bar-row">
+        <div class="analytics-bar-label">
+          <span class="analytics-bar-name" title="Filter by ${safe}" onclick="setAnalyticsFilter('${filterKey}','${safe}')">${safe}</span>
+          <span class="analytics-bar-val">${item.count} <span style="color:var(--muted);font-weight:normal;font-size:11px;">(${pct}%)</span></span>
+        </div>
+        <div class="analytics-bar-track">
+          <div class="analytics-bar-fill" style="width:${width}%;background:${color};"></div>
+        </div>
+      </div>`;
+      }).join("");
+    }
+
+    function renderAnalyticsMiniTable(tbodyId, items, total, filterKey) {
+      const tbody = qs(tbodyId);
+      if (!tbody) return;
+      if (!items.length || total === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:12px;">No records</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.slice(0, 8).map((item, idx) => {
+        const pct = ((item.count / total) * 100).toFixed(1);
+        const safe = escapeHtml(item.name);
+        return `<tr>
+      <td style="color:var(--muted);width:32px;">#${idx + 1}</td>
+      <td><span class="clickable-filter" onclick="setAnalyticsFilter('${filterKey}','${safe}')">${safe}</span></td>
+      <td style="text-align:right;font-family:ui-monospace,monospace;font-weight:700;color:var(--text);">${item.count}</td>
+      <td style="text-align:right;color:var(--mandiri-sky-blue);font-family:ui-monospace,monospace;">${pct}%</td>
+    </tr>`;
+      }).join("");
+    }
+
+    function renderAnalyticsTimeline(containerId, incidents) {
+      const container = qs(containerId);
+      if (!container) return;
+      if (!incidents.length) {
+        container.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:32px 0;">No timeline data for active filters.</div>';
+        return;
+      }
+
+      const dateMap = {};
+      incidents.forEach(r => {
+        const d = new Date(r.EventTs);
+        const key = isNaN(d.getTime()) ? "Unknown" : d.toISOString().slice(0, 10);
+        if (!dateMap[key]) dateMap[key] = { total: 0, blocked: 0, monitored: 0 };
+        dateMap[key].total++;
+        if ((r.ActionTaken || "").toUpperCase().includes("BLOCK")) dateMap[key].blocked++;
+        else dateMap[key].monitored++;
+      });
+
+      const keys = Object.keys(dateMap).sort().slice(-14);
+      const maxVal = Math.max(...keys.map(k => dateMap[k].total), 1);
+      const badgeEl = qs("anTimelineBadge");
+      if (badgeEl) badgeEl.textContent = `${keys.length} Days (${incidents.length} Events)`;
+
+      container.innerHTML = `
+    <div style="display:flex;align-items:flex-end;gap:10px;height:130px;padding:8px 0;border-bottom:1px solid rgba(24,62,112,0.8);overflow-x:auto;">
+      ${keys.map(k => {
+        const d = dateMap[k];
+        const h = Math.max(6, Math.round((d.total / maxVal) * 100));
+        const bPct = (d.blocked / d.total) * 100;
+        const mPct = (d.monitored / d.total) * 100;
+        return `<div style="flex:1;min-width:40px;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;" title="${k}: ${d.total} events">
+          <span style="font-size:10px;font-family:ui-monospace,monospace;color:var(--text);font-weight:700;margin-bottom:3px;">${d.total}</span>
+          <div style="width:100%;height:${h}px;border-radius:3px 3px 0 0;display:flex;flex-direction:column;overflow:hidden;border:1px solid #183e70;">
+            <div style="height:${bPct}%;background:#D32F2F;width:100%;"></div>
+            <div style="height:${mPct}%;background:#0288D1;width:100%;"></div>
+          </div>
+          <span style="font-size:9px;color:var(--muted);margin-top:5px;white-space:nowrap;">${k.slice(5)}</span>
+        </div>`;
+      }).join("")}
+    </div>
+    <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--muted);">
+      <span style="display:inline-flex;align-items:center;gap:5px;"><span style="display:inline-block;width:10px;height:10px;background:#D32F2F;border-radius:2px;"></span>Blocked</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;"><span style="display:inline-block;width:10px;height:10px;background:#0288D1;border-radius:2px;"></span>Monitored</span>
+    </div>`;
+    }
+
+    function renderAnalytics() {
+      const incidents = getFilteredAnalyticsIncidents();
+      const totalCount = incidents.length;
+      const totalCached = (cachedIncidents || []).length;
+
+      const sumEl = qs("anFilterSummary");
+      if (sumEl) {
+        sumEl.textContent = totalCount === totalCached
+          ? `Analyzing all ${totalCached} incidents`
+          : `Filtered: ${totalCount} of ${totalCached} incidents`;
+      }
+
+      const siteMap = {};
+      const actionMap = {};
+      const ipMap = {};
+      const typeMap = {};
+      let totalDetections = 0;
+
+      incidents.forEach(r => {
+        const site = r.SiteHost || "Unknown";
+        siteMap[site] = (siteMap[site] || 0) + 1;
+
+        const act = r.ActionTaken || "BLOCKED";
+        actionMap[act] = (actionMap[act] || 0) + 1;
+
+        const ip = r.ClientIp || "Unknown";
+        ipMap[ip] = (ipMap[ip] || 0) + 1;
+
+        (r.findings || []).forEach(f => {
+          const t = f.type || "UNKNOWN";
+          typeMap[t] = (typeMap[t] || 0) + 1;
+          totalDetections++;
+        });
+      });
+
+      const rank = (map) => Object.keys(map).map(k => ({ name: k, count: map[k] })).sort((a, b) => b.count - a.count);
+      const ACTION_COLORS = { BLOCKED: "#D32F2F", PASTE_BLOCKED: "#C2185B", DROP_BLOCKED: "#E65100", MONITORED: "#0288D1" };
+
+      const siteList = rank(siteMap);
+      const actionList = rank(actionMap).map(a => ({ ...a, color: ACTION_COLORS[a.name] || "#FFB700" }));
+      const ipList = rank(ipMap);
+      const typeList = rank(typeMap);
+
+      const setKpi = (numId, subId, item, unit) => {
+        const numEl = qs(numId); const subEl = qs(subId);
+        if (numEl) numEl.textContent = item ? item.name : "–";
+        if (subEl) subEl.textContent = item
+          ? `${item.count} ${unit} (${((item.count / Math.max(unit === "detections" ? totalDetections : totalCount, 1)) * 100).toFixed(0)}%)`
+          : `0 ${unit}`;
+      };
+      setKpi("anTopSite", "anTopSiteSub", siteList[0], "incidents");
+      setKpi("anTopAction", "anTopActionSub", actionList[0], "incidents");
+      setKpi("anTopIp", "anTopIpSub", ipList[0], "incidents");
+      setKpi("anTopType", "anTopTypeSub", typeList[0], "detections");
+
+      const setBadge = (id, val) => { const el = qs(id); if (el) el.textContent = val; };
+      setBadge("anSiteCountBadge", `${siteList.length} Sites`);
+      setBadge("anActionCountBadge", `${actionList.length} Actions`);
+      setBadge("anIpCountBadge", `${ipList.length} IPs`);
+      setBadge("anTypeCountBadge", `${typeList.length} Types`);
+      setBadge("badgeAnalytics", totalCached);
+
+      renderAnalyticsBarChart("anSiteChart", siteList, totalCount, "site");
+      renderAnalyticsBarChart("anActionChart", actionList, totalCount, "action");
+      renderAnalyticsBarChart("anIpChart", ipList, totalCount, "ip");
+      renderAnalyticsBarChart("anTypeChart", typeList, totalDetections, "type");
+
+      renderAnalyticsMiniTable("anSiteTable", siteList, totalCount, "site");
+      renderAnalyticsMiniTable("anActionTable", actionList, totalCount, "action");
+      renderAnalyticsMiniTable("anIpTable", ipList, totalCount, "ip");
+      renderAnalyticsMiniTable("anTypeTable", typeList, totalDetections, "type");
+
+      renderAnalyticsTimeline("anTimelineChart", incidents);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Incident toolbar wiring
+    // ---------------------------------------------------------------------------
+    function scheduleAuto() {
+      clearInterval(timer);
+      if (qs("autoRefresh").checked) timer = setInterval(load, 10000);
+    }
+
+    qs("apply").onclick = load;
+    qs("reset").onclick = () => {
+      qs("fSite").value = ""; qs("fType").value = ""; qs("fAction").value = ""; qs("fIp").value = "";
+      qs("fFrom").value = ""; qs("fTo").value = "";
+      load();
+    };
+    qs("autoRefresh").onchange = scheduleAuto;
+    qs("exportCsv").onclick = () => {
+      window.open(`/api/pii-logs/export.csv?${buildQuery()}`, "_blank");
+    };
+
+    // ---------------------------------------------------------------------------
+    // Monitored URLs Panel
+    // ---------------------------------------------------------------------------
+    async function loadUrls() {
+      try {
+        const res = await fetch("/api/monitored-urls");
+        const data = await res.json();
+        cachedUrls = data.urls || [];
+        qs("badgeUrls").textContent = cachedUrls.length;
+        renderUrls(cachedUrls);
+      } catch (e) {
+        qs("urlRows").innerHTML = '<tr><td colspan="4" class="error-cell">Could not load monitored URLs</td></tr>';
+      }
+    }
+
+    function renderUrls(urls) {
+      if (urls !== undefined) cachedUrls = urls || [];
+      qs("badgeUrls").textContent = cachedUrls.length;
+      const tbody = qs("urlRows");
+      const pagedUrls = pagers.urls.slice(applyFilter("urls", cachedUrls));
+      if (!pagedUrls.length) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-cell">${cachedUrls.length ? "No monitored sites match this filter." : "No URLs configured yet."}</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = pagedUrls.map(u => `
+    <tr>
+      <td class="masked" style="color:var(--text); font-weight:600;">${u.Pattern}</td>
+      <td>${u.Enabled ? '<span class="status-active">Active</span>' : '<span class="status-inactive">Inactive</span>'}</td>
+      <td>${new Date(u.CreatedAt).toLocaleDateString()}</td>
+      <td>
+        <button class="btn btn-secondary" style="padding:3px 8px;" data-edit-url="${u.Id}" data-pattern="${u.Pattern}">Edit</button>
+        <button class="btn btn-secondary" style="padding:3px 8px;" data-toggle="${u.Id}" data-enabled="${u.Enabled}">${u.Enabled ? "Disable" : "Enable"}</button>
+        <button class="btn btn-danger" style="padding:3px 8px;" data-delete="${u.Id}">Remove</button>
+      </td>
+    </tr>`).join("");
+
+      tbody.querySelectorAll("[data-edit-url]").forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute("data-edit-url");
+          const pattern = btn.getAttribute("data-pattern");
+          qs("editUrlId").value = id;
+          qs("editUrlPattern").value = pattern;
+          qs("modalEditUrl").style.display = "flex";
+          qs("editUrlPattern").focus();
+        };
+      });
+
+      tbody.querySelectorAll("[data-toggle]").forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute("data-toggle");
+          const currentlyEnabled = btn.getAttribute("data-enabled") === "true";
+          await fetch(`/api/monitored-urls/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ enabled: !currentlyEnabled }),
+          });
+          loadUrls();
+        };
+      });
+
+      tbody.querySelectorAll("[data-delete]").forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute("data-delete");
+          if (!confirm("Remove this target URL from enterprise monitoring?")) return;
+          await fetch(`/api/monitored-urls/${id}`, { method: "DELETE" });
+          loadUrls();
+        };
+      });
+    }
+
+    qs("saveUrlEdit").onclick = async () => {
+      const id = qs("editUrlId").value;
+      const pattern = qs("editUrlPattern").value.trim();
+      if (!pattern) return;
+      const res = await fetch(`/api/monitored-urls/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pattern }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Could not update URL.");
+        return;
+      }
+      closeModals();
+      loadUrls();
+    };
+
+    qs("addUrl").onclick = async () => {
+      const pattern = qs("newUrlPattern").value.trim();
+      if (!pattern) return;
+      const res = await fetch("/api/monitored-urls", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pattern }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Could not add URL.");
+        return;
+      }
+      qs("newUrlPattern").value = "";
+      loadUrls();
+    };
+
+    // ---------------------------------------------------------------------------
+    // PII Rules Panel
+    // ---------------------------------------------------------------------------
+    function populateTypeFilter(rules) {
+      const prevVal = qs("fType").value;
+      const types = [...new Set((rules || []).map(r => r.Type))].sort();
+
+      const makeOptions = (includeAll, selectedVal) =>
+        (includeAll ? `<option value="">All PII Types</option>` : "") +
+        types.map(t => `<option value="${t}"${t === selectedVal ? " selected" : ""}>${t}</option>`).join("");
+
+      qs("fType").innerHTML = makeOptions(true, prevVal);
+    }
+
+    async function loadRules() {
+      try {
+        const res = await fetch("/api/pii-rules");
+        const data = await res.json();
+        cachedRules = data.rules || [];
+        qs("badgeRules").textContent = cachedRules.length;
+        populateTypeFilter(cachedRules);
+        populateAnalyticsFilters();
+        filterRules();
+      } catch (e) {
+        qs("ruleRows").innerHTML = '<tr><td colspan="7" class="error-cell">Could not load rules</td></tr>';
+      }
+    }
+
+    function filterRules() {
+      renderRules(applyFilter("rules", cachedRules));
+    }
+
+    function renderRules(rules) {
+      const items = rules !== undefined ? rules : cachedRules;
+      const tbody = qs("ruleRows");
+      const pagedRules = pagers.rules.slice(items);
+      if (!pagedRules.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-cell">No matching detection policies found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = pagedRules.map(r => {
+        const isMonitor = (r.Action || "block").toLowerCase() === "monitor";
+        const actionBadge = isMonitor
+          ? '<span class="status-pill-badge" style="background:rgba(103,178,232,0.18);color:var(--mandiri-sky-blue);border:1px solid rgba(103,178,232,0.4);">MONITOR</span>'
+          : '<span class="status-pill-badge" style="background:rgba(234,114,0,0.18);color:var(--mandiri-orange);border:1px solid rgba(234,114,0,0.4);">BLOCK</span>';
+
+        return `<tr>
+      <td><span class="tag">${r.Type}</span></td>
+      <td style="font-weight:600; color:var(--text);">${r.Label}</td>
+      <td class="masked" style="max-width:260px; overflow-wrap:anywhere;">${r.Pattern}</td>
+      <td><span style="color:var(--mandiri-sky-blue); font-size:12px;">${r.Validator}</span></td>
+      <td>${actionBadge}</td>
+      <td>${r.Enabled ? '<span class="status-active">Active</span>' : '<span class="status-inactive">Inactive</span>'}</td>
+      <td>
+        <button class="btn btn-secondary" style="padding:3px 8px;" data-action-toggle="${r.Id}" data-action="${r.Action || 'block'}">${isMonitor ? "Set Block" : "Set Monitor"}</button>
+        <button class="btn btn-secondary" style="padding:3px 8px;" data-edit-rule="${r.Id}">Edit</button>
+        <button class="btn btn-secondary" style="padding:3px 8px;" data-rtoggle="${r.Id}" data-enabled="${r.Enabled}">${r.Enabled ? "Disable" : "Enable"}</button>
+        <button class="btn btn-danger" style="padding:3px 8px;" data-rdelete="${r.Id}">Remove</button>
+      </td>
+    </tr>`;
+      }).join("");
+
+      tbody.querySelectorAll("[data-action-toggle]").forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute("data-action-toggle");
+          const currentAction = (btn.getAttribute("data-action") || "block").toLowerCase();
+          const nextAction = currentAction === "monitor" ? "block" : "monitor";
+          await fetch(`/api/pii-rules/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: nextAction }),
+          });
+          loadRules();
+        };
+      });
+
+      tbody.querySelectorAll("[data-edit-rule]").forEach(btn => {
+        btn.onclick = () => {
+          const id = Number(btn.getAttribute("data-edit-rule"));
+          const rule = cachedRules.find(r => r.Id === id);
+          if (!rule) return;
+          qs("editRuleId").value = rule.Id;
+          qs("editRuleType").value = rule.Type;
+          qs("editRuleLabel").value = rule.Label;
+          qs("editRulePattern").value = rule.Pattern;
+          qs("editRuleFlags").value = rule.Flags || "g";
+          qs("editRuleValidator").value = rule.Validator || "none";
+          qs("editRuleKeyMode").value = rule.KeyMode || "digits";
+          qs("editRuleAction").value = (rule.Mode || rule.Action || "block").toLowerCase();
+          qs("modalEditRule").style.display = "flex";
+          qs("editRuleLabel").focus();
+        };
+      });
+
+      tbody.querySelectorAll("[data-rtoggle]").forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute("data-rtoggle");
+          const currentlyEnabled = btn.getAttribute("data-enabled") === "true";
+          await fetch(`/api/pii-rules/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ enabled: !currentlyEnabled }),
+          });
+          loadRules();
+        };
+      });
+
+      tbody.querySelectorAll("[data-rdelete]").forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute("data-rdelete");
+          if (!confirm("Remove this PII detection rule?")) return;
+          await fetch(`/api/pii-rules/${id}`, { method: "DELETE" });
+          loadRules();
+        };
+      });
+    }
+
+    qs("saveRuleEdit").onclick = async () => {
+      const id = qs("editRuleId").value;
+      const body = {
+        type: qs("editRuleType").value.trim(),
+        label: qs("editRuleLabel").value.trim(),
+        pattern: qs("editRulePattern").value.trim(),
+        flags: qs("editRuleFlags").value.trim() || "g",
+        validator: qs("editRuleValidator").value,
+        keyMode: qs("editRuleKeyMode").value,
+        action: qs("editRuleAction").value,
+      };
+      if (!body.type || !body.label || !body.pattern) {
+        alert("Type, label, and pattern are required.");
+        return;
+      }
+      const res = await fetch(`/api/pii-rules/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Could not update rule.");
+        return;
+      }
+      closeModals();
+      loadRules();
+    };
+
+    qs("addRule").onclick = async () => {
+      const body = {
+        type: qs("rType").value.trim(),
+        label: qs("rLabel").value.trim(),
+        pattern: qs("rPattern").value.trim(),
+        flags: qs("rFlags").value.trim() || "g",
+        validator: qs("rValidator").value,
+        keyMode: qs("rKeyMode").value,
+        action: qs("rAction").value,
+      };
+      if (!body.type || !body.label || !body.pattern) {
+        alert("Type, label, and pattern are required.");
+        return;
+      }
+      const res = await fetch("/api/pii-rules", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Could not add rule.");
+        return;
+      }
+      qs("rType").value = ""; qs("rLabel").value = ""; qs("rPattern").value = "";
+      qs("rFlags").value = "g"; qs("rValidator").value = "none"; qs("rKeyMode").value = "digits";
+      qs("rAction").value = "block";
+      loadRules();
+    };
+
+    // ---------------------------------------------------------------------------
+    // Connected Devices Panel
+    // ---------------------------------------------------------------------------
+    async function loadDevices() {
+      try {
+        const res = await fetch("/api/devices");
+        const data = await res.json();
+        cachedDevices = data.devices || [];
+        qs("badgeDevices").textContent = cachedDevices.length;
+        filterDevices();
+      } catch (e) {
+        qs("deviceRows").innerHTML = '<tr><td colspan="5" class="error-cell">Could not load devices</td></tr>';
+      }
+    }
+
+    function filterDevices() {
+      renderDevices(applyFilter("devices", cachedDevices));
+    }
+
+    function renderDevices(devices) {
+      const tbody = qs("deviceRows");
+      const pagedDevices = pagers.devices.slice(devices || []);
+      if (!pagedDevices.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-cell">${cachedDevices.length ? "No devices match this filter." : "No devices have checked in yet."}</td></tr>`;
+        return;
+      }
+      const generalIds = new Set((cachedGroups || []).filter(x => x.isSystem).map(x => x.id));
+      tbody.innerHTML = pagedDevices.map(d => {
+        const chips = (d.groups || []).map(g => {
+          const general = generalIds.has(g.id) || g.name === "General";
+          return `<span class="group-chip${general ? " general" : ""}" data-gid="${g.id}" title="Open ${escapeHtml(g.name)} in Group Management">${escapeHtml(g.name)}</span>`;
+        }).join(" ");
+        return `<tr>
+      <td class="ip-code"><strong style="color:var(--text);">${escapeHtml(d.ClientIp)}</strong></td>
+      <td>${new Date(d.FirstSeen).toLocaleString()}</td>
+      <td>${new Date(d.LastSeen).toLocaleString()}</td>
+      <td style="font-weight:600; color:var(--text);">${d.CheckinCount}</td>
+      <td>${chips}</td>
+    </tr>`;
+      }).join("");
+      tbody.querySelectorAll(".group-chip").forEach(el => { el.onclick = () => goToGroup(el.dataset.gid); });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Group Management
+    // Any admin can create/edit groups and add/remove members; only the
+    // superadmin can delete a group (also enforced by the API).
+    // ---------------------------------------------------------------------------
+    let focusGroupId = null;
+    let gd = { id: null, data: null, memberQuery: "" };   // group open in the detail popup
+    const isSuperadmin = () => !!currentUser && currentUser.role === "superadmin";
+
+    function exemptTags(g, kind, max) {
+      const isUrl = kind === "urls";
+      if (g.isSystem) return '<span style="color:var(--muted);">None (no exemption)</span>';
+      if (isUrl ? g.exemptAllUrls : g.exemptAllTypes) return `<span class="tag all">${isUrl ? "All URLs" : "All classifications"}</span>`;
+      const items = isUrl ? g.exemptUrls : g.exemptTypes;
+      if (!items.length) return '<span style="color:var(--muted);">None</span>';
+      const shown = max ? items.slice(0, max) : items;
+      return shown.map(i => `<span class="tag">${escapeHtml(i)}</span>`).join("") +
+        (items.length > shown.length ? `<span class="tag more">+${items.length - shown.length} more</span>` : "");
+    }
+
+    async function loadGroups() {
+      try {
+        const res = await fetch("/api/groups");
+        if (!res.ok) throw new Error("bad response");
+        const data = await res.json();
+        cachedGroups = data.groups || [];
+        qs("badgeGroups").textContent = cachedGroups.length;
+        renderGroups();
+        if (cachedDevices.length) filterDevices();   // refresh General styling on the chips
+      } catch (_) {
+        qs("groupRows").innerHTML = '<tr><td colspan="6" class="error-cell">Could not load groups</td></tr>';
+      }
+    }
+
+    function renderGroups() {
+      const tbody = qs("groupRows");
+      const filtered = applyFilter("groups", cachedGroups);
+
+      // Arriving from a Client IP's group chip: jump to the page holding that group.
+      if (focusGroupId != null && pagers.groups.pageSize > 0) {
+        const idx = filtered.findIndex(g => g.id === focusGroupId);
+        if (idx >= 0) pagers.groups.currentPage = Math.floor(idx / pagers.groups.pageSize) + 1;
+      }
+
+      const paged = pagers.groups.slice(filtered);
+      if (!paged.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-cell">${cachedGroups.length ? "No groups match this filter." : "No groups yet."}</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = paged.map(g => `
+    <tr data-gid="${g.id}">
+      <td><strong style="color:var(--text);">${escapeHtml(g.name)}</strong>${g.isSystem ? ' <span class="tag">Default</span>' : ""}</td>
+      <td>${exemptTags(g, "urls", 3)}</td>
+      <td>${exemptTags(g, "types", 4)}</td>
+      <td>${g.createdAt ? new Date(g.createdAt).toLocaleString() : "–"}</td>
+      <td style="font-weight:600; color:var(--text);">${g.memberCount}</td>
+      <td><button class="btn btn-secondary" style="padding:3px 8px;" data-gdetail="${g.id}">Detail</button></td>
+    </tr>`).join("");
+      tbody.querySelectorAll("[data-gdetail]").forEach(b => { b.onclick = () => openGroupDetail(Number(b.dataset.gdetail)); });
+
+      if (focusGroupId != null) {
+        const row = tbody.querySelector(`tr[data-gid="${focusGroupId}"]`);
+        if (row) {
+          row.classList.add("row-flash");
+          row.scrollIntoView({ block: "center", behavior: "smooth" });
+        }
+        focusGroupId = null;
+      }
+    }
+
+    // Clicking a group on the Client IPs table lands here.
+    function goToGroup(id) {
+      const gid = Number(id);
+      if (!Number.isFinite(gid)) return;
+      resetFilter("groups", false);
+      focusGroupId = gid;
+      switchTab("tab-groups");
+      renderGroups();
+    }
+
+    async function openGroupDetail(id) {
+      try {
+        const res = await fetch(`/api/groups/${id}`);
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          alert(err.error || "Could not load group.");
+          return;
+        }
+        gd = { id, data: await res.json(), memberQuery: "" };
+        qs("gdMemberSearch").value = "";
+        renderGroupDetail();
+        qs("modalGroupDetail").style.display = "flex";
+      } catch (_) {
+        alert("Could not load group.");
+      }
+    }
+
+    // Re-fetch the open detail popup after a change, keeping the member search.
+    async function refreshGroupDetail() {
+      if (gd.id == null || qs("modalGroupDetail").style.display === "none") return;
+      try {
+        const res = await fetch(`/api/groups/${gd.id}`);
+        if (!res.ok) { closeModal("modalGroupDetail"); return; }
+        gd.data = await res.json();
+        renderGroupDetail();
+      } catch (_) { }
+    }
+
+    function renderGroupDetail() {
+      const g = gd.data.group;
+      qs("gdName").textContent = g.name;
+      qs("gdSystemTag").style.display = g.isSystem ? "" : "none";
+      qs("gdUrls").innerHTML = exemptTags(g, "urls");
+      qs("gdTypes").innerHTML = exemptTags(g, "types");
+      qs("gdCreated").textContent = (g.createdAt ? new Date(g.createdAt).toLocaleString() : "–") + (g.createdBy ? ` · by ${g.createdBy}` : "");
+      qs("gdCount").textContent = g.memberCount;
+      qs("gdSysNote").style.display = g.isSystem ? "" : "none";
+
+      qs("gdEdit").disabled = g.isSystem;
+      qs("gdAdd").disabled = g.isSystem;
+      const del = qs("gdDelete");
+      del.disabled = g.isSystem || !isSuperadmin();
+      del.title = g.isSystem ? "The General group cannot be deleted"
+        : !isSuperadmin() ? "Only the superadmin can delete a group" : "";
+      renderMembers();
+    }
+
+    function renderMembers() {
+      if (!gd.data) return;
+      const { members, implicit, truncated, group } = gd.data;
+      const q = (gd.memberQuery || "").trim().toLowerCase();
+      const list = q ? members.filter(m => (m.clientIp || "").toLowerCase().includes(q)) : members;
+
+      qs("gdMemberHead").innerHTML = implicit
+        ? "<tr><th>Client IP</th><th>Last Seen</th></tr>"
+        : "<tr><th>Client IP</th><th>Added At</th><th>Added By</th><th>Action</th></tr>";
+      const cols = implicit ? 2 : 4;
+      const body = qs("gdMemberRows");
+
+      if (!list.length) {
+        const msg = members.length ? "No member matches this search."
+          : implicit ? "Every known device is already in another group."
+            : "No members yet. Use Add member.";
+        body.innerHTML = `<tr><td colspan="${cols}" class="empty-cell">${msg}</td></tr>`;
+      } else {
+        body.innerHTML = list.map(m => implicit
+          ? `<tr>
+           <td class="ip-code"><strong style="color:var(--text);">${escapeHtml(m.clientIp)}</strong></td>
+           <td>${m.lastSeen ? new Date(m.lastSeen).toLocaleString() : "–"}</td>
+         </tr>`
+          : `<tr>
+           <td class="ip-code"><strong style="color:var(--text);">${escapeHtml(m.clientIp)}</strong></td>
+           <td>${m.addedAt ? new Date(m.addedAt).toLocaleString() : "–"}</td>
+           <td style="color:var(--muted);">${escapeHtml(m.addedBy || "")}</td>
+           <td><button class="btn btn-danger" style="padding:3px 8px;" data-rm="${m.id}" data-ip="${escapeHtml(m.clientIp)}">Remove</button></td>
+         </tr>`).join("");
+        body.querySelectorAll("[data-rm]").forEach(b => { b.onclick = () => removeMember(Number(b.dataset.rm), b.dataset.ip); });
+      }
+
+      const note = qs("gdTruncNote");
+      note.style.display = truncated ? "" : "none";
+      if (truncated) note.textContent = `Showing the first ${members.length} of ${group.memberCount} members. Use the search box to narrow down.`;
+    }
+
+    async function removeMember(memberId, ip) {
+      const g = gd.data.group;
+      if (!confirm(`Remove ${ip} from "${g.name}"? It loses this group's exemptions and returns to General unless it is in another group.`)) return;
+      const res = await fetch(`/api/groups/${g.id}/members/${memberId}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Could not remove member.");
+        return;
+      }
+      await refreshGroupDetail();
+      loadGroups();
+      loadDevices();
+    }
+
+    async function deleteGroup() {
+      const g = gd.data?.group;
+      if (!g || g.isSystem) return;
+      if (!isSuperadmin()) { alert("Only the superadmin can delete a group."); return; }
+      if (!confirm(`Delete group "${g.name}"? Its ${g.memberCount} member(s) lose this group's exemptions and return to General unless they belong to another group.`)) return;
+      const res = await fetch(`/api/groups/${g.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Could not delete group.");
+        return;
+      }
+      closeModal("modalGroupDetail");
+      gd = { id: null, data: null, memberQuery: "" };
+      await loadGroups();
+      loadDevices();
+    }
+
+    // ---- Create / edit --------------------------------------------------------
+    function buildChecklist(containerId, options, selected) {
+      qs(containerId).innerHTML = options.length
+        ? options.map(o => `<label class="check-item"><input type="checkbox" value="${escapeHtml(o.value)}"${selected.has(o.value) ? " checked" : ""}><span>${escapeHtml(o.label)}</span></label>`).join("")
+        : '<span class="modal-tip">Nothing to choose from yet.</span>';
+    }
+
+    function syncExemptInputs() {
+      qs("geUrlList").classList.toggle("disabled", qs("geAllUrls").checked);
+      qs("geTypeList").classList.toggle("disabled", qs("geAllTypes").checked);
+    }
+
+    // group = null -> create; group object -> edit
+    function openGroupEdit(group) {
+      const edit = !!group;
+      qs("geTitle").textContent = edit ? `Edit Group: ${group.name}` : "New Group";
+      qs("geId").value = edit ? group.id : "";
+      qs("geName").value = edit ? group.name : "";
+      qs("geAllUrls").checked = edit ? group.exemptAllUrls : false;
+      qs("geAllTypes").checked = edit ? group.exemptAllTypes : false;
+
+      const selUrls = new Set(edit ? group.exemptUrls : []);
+      const selTypes = new Set(edit ? group.exemptTypes : []);
+      // Keep already-saved values visible even if they are no longer in the live lists.
+      const urlOpts = [...new Set([...cachedUrls.map(u => u.Pattern), ...selUrls])].map(v => ({ value: v, label: v }));
+      const typeOpts = cachedRules.map(r => ({ value: r.Type, label: `${r.Type} — ${r.Label}` }));
+      for (const t of selTypes) if (!typeOpts.some(o => o.value === t)) typeOpts.push({ value: t, label: `${t} (no longer defined)` });
+
+      buildChecklist("geUrlList", urlOpts, selUrls);
+      buildChecklist("geTypeList", typeOpts, selTypes);
+      syncExemptInputs();
+      hideMsg("geError");
+      qs("modalGroupEdit").style.display = "flex";
+      qs("geName").focus();
+    }
+
+    async function saveGroup() {
+      const id = qs("geId").value;
+      const body = {
+        name: qs("geName").value.trim(),
+        exemptAllUrls: qs("geAllUrls").checked,
+        exemptAllTypes: qs("geAllTypes").checked,
+        exemptUrls: [...qs("geUrlList").querySelectorAll("input:checked")].map(i => i.value),
+        exemptTypes: [...qs("geTypeList").querySelectorAll("input:checked")].map(i => i.value),
+      };
+      const res = await fetch(id ? `/api/groups/${id}` : "/api/groups", {
+        method: id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showMsg("geError", data.error || "Could not save group.", false); return; }
+      closeModal("modalGroupEdit");
+      await loadGroups();
+      loadDevices();
+      if (id) refreshGroupDetail();
+      else openGroupDetail(data.id);   // new group: go straight to its members
+    }
+
+    // ---- Add member -----------------------------------------------------------
+    function openAddMember() {
+      if (!gd.data || gd.data.group.isSystem) return;
+      qs("amIps").value = "";
+      hideMsg("amError");
+      const inGroup = new Set(gd.data.members.map(m => ipKey(m.clientIp)));
+      const known = cachedDevices.filter(d => !inGroup.has(ipKey(d.ClientIp))).slice(0, 30);
+      const box = qs("amKnown");
+      box.innerHTML = known.length
+        ? known.map(d => `<span class="ip-chip" data-ip="${escapeHtml(d.ClientIp)}">${escapeHtml(d.ClientIp)}</span>`).join("")
+        : '<span class="modal-tip">No other known devices.</span>';
+      box.querySelectorAll(".ip-chip").forEach(c => {
+        c.onclick = () => {
+          const area = qs("amIps");
+          const have = area.value.split(/[\s,;]+/).filter(Boolean);
+          if (!have.includes(c.dataset.ip)) area.value = (area.value.trim() ? area.value.trim() + "\n" : "") + c.dataset.ip;
+        };
+      });
+      qs("modalGroupAddMember").style.display = "flex";
+      qs("amIps").focus();
+    }
+
+    async function submitAddMember() {
+      const ips = qs("amIps").value.split(/[\s,;]+/).map(x => x.trim()).filter(Boolean);
+      if (!ips.length) { showMsg("amError", "Enter at least one IP address.", false); return; }
+      const res = await fetch(`/api/groups/${gd.data.group.id}/members`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ips }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { showMsg("amError", data.error || "Could not add members.", false); return; }
+
+      await refreshGroupDetail();
+      loadGroups();
+      loadDevices();
+      if (data.invalid && data.invalid.length) {
+        // Some entries were not valid IPs: keep the popup open with just those.
+        qs("amIps").value = data.invalid.join("\n");
+        showMsg("amError", `Added ${data.added}${data.skipped ? `, ${data.skipped} already in the group` : ""}. Not valid, fix and retry: ${data.invalid.join(", ")}`, false);
+        return;
+      }
+      closeModal("modalGroupAddMember");
+    }
+
+    // ---------------------------------------------------------------------------
+    // Authentication, change password, admin management
+    // ---------------------------------------------------------------------------
+    let currentUser = null;
+    let cachedAdmins = [];
+
+    async function initAuth() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) return;
+        currentUser = await res.json();
+        const isSuper = currentUser.role === "superadmin";
+        qs("userName").textContent = currentUser.username;
+        const badge = qs("userRole");
+        badge.textContent = isSuper ? "Super Admin" : "Admin";
+        badge.classList.toggle("super", isSuper);
+        qs("headerUser").style.display = "flex";
+        if (isSuper) {
+          qs("navAdmins").style.display = "";
+          loadAdmins();
+          setInterval(loadAdmins, 15000);
+        }
+        startIdleWatch(currentUser.idleTimeoutMs);
+      } catch (_) { }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Idle sign-out. The server is the authority: it ends a session after
+    // SESSION_IDLE_MINUTES (default 15) without activity, so closing the tab or
+    // a frozen/sleeping browser still times out. This code adds (1) a heartbeat
+    // so real use keeps the session alive and (2) a warning before it ends.
+    // "Activity" means real input (mouse, keyboard, scroll, touch). The
+    // dashboard's own auto-refresh polling is deliberately NOT activity,
+    // otherwise an unattended console would never time out.
+    // ---------------------------------------------------------------------------
+    const IDLE = { ms: 15 * 60 * 1000, warnMs: 60000, pingMs: 30000, last: Date.now(), lastPing: 0, lsWrite: 0, dirty: true, warned: false, done: false, timer: null };
+    const IDLE_LS_KEY = "dps_last_activity";   // shared across tabs of this console
+
+    function startIdleWatch(ms) {
+      if (Number.isFinite(ms) && ms > 0) IDLE.ms = ms;
+      IDLE.warnMs = Math.min(60000, IDLE.ms / 3);
+      IDLE.pingMs = Math.min(30000, Math.max(500, IDLE.ms / 10));
+      IDLE.last = Date.now();
+      IDLE.dirty = true;      // opening the console counts as activity
+      IDLE.lastPing = 0;
+      ["mousemove", "mousedown", "keydown", "scroll", "wheel", "touchstart", "click"].forEach(ev =>
+        window.addEventListener(ev, onUserActivity, { capture: true, passive: true }));
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) idleTick(); });
+      IDLE.timer = setInterval(idleTick, 1000);
+      idleTick();
+    }
+
+    function onUserActivity() {
+      if (IDLE.warned) return;   // while the warning is up, only its own buttons count
+      const now = Date.now();
+      IDLE.last = now;
+      IDLE.dirty = true;
+      if (now - IDLE.lsWrite > 1000) {
+        IDLE.lsWrite = now;
+        try { localStorage.setItem(IDLE_LS_KEY, String(now)); } catch (_) { }
+      }
+    }
+
+    // Most recent activity seen by this tab OR any other open tab of the console.
+    function idleLastActivity() {
+      let shared = 0;
+      try { shared = Number(localStorage.getItem(IDLE_LS_KEY)) || 0; } catch (_) { }
+      return Math.max(IDLE.last, shared);
+    }
+
+    function idleTick() {
+      if (IDLE.done) return;
+      const now = Date.now();
+      const remaining = IDLE.ms - (now - idleLastActivity());
+      if (remaining <= 0) { idleSignOut(true); return; }
+
+      // Tell the server about activity since the last heartbeat. Sent at most
+      // every pingMs, and always after the activity it reports, so the server's
+      // timer can only end up later than ours, never earlier.
+      if (IDLE.dirty && now - IDLE.lastPing >= IDLE.pingMs) sendActivityPing();
+
+      if (remaining <= IDLE.warnMs) {
+        if (!IDLE.warned) showIdleWarning();
+        qs("idleCountdown").textContent = Math.max(1, Math.ceil(remaining / 1000));
+      } else if (IDLE.warned) {
+        hideIdleWarning();       // someone used another tab of the console
+      }
+    }
+
+    async function sendActivityPing() {
+      IDLE.lastPing = Date.now();
+      const reported = IDLE.last;
+      try {
+        const res = await fetch("/api/auth/activity", { method: "POST" });   // a 401 redirects via the fetch wrapper
+        if (res.ok && IDLE.last === reported) IDLE.dirty = false;
+      } catch (_) { /* server unreachable: stays dirty and is retried */ }
+    }
+
+    function showIdleWarning() {
+      IDLE.warned = true;
+      qs("modalIdleWarning").style.display = "flex";
+      qs("idleStay").focus();
+    }
+    function hideIdleWarning() {
+      IDLE.warned = false;
+      qs("modalIdleWarning").style.display = "none";
+    }
+
+    function stayLoggedIn() {
+      hideIdleWarning();
+      const now = Date.now();
+      IDLE.last = now;
+      IDLE.lsWrite = now;
+      IDLE.dirty = true;
+      IDLE.lastPing = 0;         // report it immediately
+      try { localStorage.setItem(IDLE_LS_KEY, String(now)); } catch (_) { }
+      idleTick();
+    }
+
+    // Ends the session on the server first (so the login page does not bounce
+    // straight back in), then goes to the login page.
+    async function idleSignOut(expired) {
+      if (IDLE.done) return;
+      IDLE.done = true;
+      clearInterval(IDLE.timer);
+      try { await _origFetch("/api/auth/logout", { method: "POST" }); } catch (_) { }
+      window.location.replace(expired ? "/login.html?expired=1" : "/login.html");
+    }
+
+    async function logout() {
+      try { await _origFetch("/api/auth/logout", { method: "POST" }); } catch (_) { }
+      window.location.replace("/login.html");
+    }
+
+    function showMsg(id, text, ok) {
+      const el = qs(id);
+      el.textContent = text;
+      el.classList.toggle("ok", !!ok);
+      el.classList.add("show");
+    }
+    function hideMsg(id) { qs(id).classList.remove("show"); }
+
+    // ---- change own password (all roles) ----
+    function openChangePassword() {
+      ["cpCurrent", "cpNew", "cpNew2"].forEach(id => qs(id).value = "");
+      hideMsg("changePwMsg");
+      qs("saveChangePw").disabled = false;
+      qs("modalChangePw").style.display = "flex";
+      qs("cpCurrent").focus();
+    }
+
+    async function changePassword() {
+      hideMsg("changePwMsg");
+      const currentPassword = qs("cpCurrent").value;
+      const newPassword = qs("cpNew").value;
+      if (!currentPassword) return showMsg("changePwMsg", "Enter your current password.");
+      if (newPassword !== qs("cpNew2").value) return showMsg("changePwMsg", "New passwords do not match.");
+
+      const btn = qs("saveChangePw");
+      btn.disabled = true;
+      try {
+        const res = await fetch("/api/auth/change-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          showMsg("changePwMsg", data.error || "Could not change password.");
+          btn.disabled = false;
+          return;
+        }
+        ["cpCurrent", "cpNew", "cpNew2"].forEach(id => qs(id).value = "");
+        showMsg("changePwMsg", "Password updated. Any other signed-in sessions for this account were signed out.", true);
+        setTimeout(closeModals, 1800);
+      } catch (_) {
+        showMsg("changePwMsg", "Cannot reach the server.");
+        btn.disabled = false;
+      }
+    }
+
+    // ---- admin management (superadmin) ----
+    async function loadAdmins() {
+      if (!currentUser || currentUser.role !== "superadmin") return;
+      try {
+        const res = await fetch("/api/admins");
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        cachedAdmins = data.admins || [];
+        qs("badgeAdmins").textContent = cachedAdmins.length;
+        renderAdmins();
+      } catch (_) {
+        qs("adminRows").innerHTML = '<tr><td colspan="6" class="error-cell">Could not load administrators</td></tr>';
+      }
+    }
+
+    function renderAdmins() {
+      const tbody = qs("adminRows");
+      const admins = applyFilter("admins", cachedAdmins);
+      if (!admins.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-cell">${cachedAdmins.length ? "No administrators match this filter." : "No administrators."}</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = admins.map(a => {
+        const isSuper = a.Role === "superadmin";
+        const you = currentUser && a.Username === currentUser.username
+          ? ' <span style="color:var(--muted); font-weight:400;">(you)</span>' : "";
+        return `
+    <tr>
+      <td><strong style="color:var(--text);">${escapeHtml(a.Username)}</strong>${you}</td>
+      <td><span class="role-badge ${isSuper ? "super" : ""}">${isSuper ? "Super Admin" : "Admin"}</span></td>
+      <td>${a.CreatedAt ? new Date(a.CreatedAt).toLocaleDateString() : ""}</td>
+      <td style="color:var(--muted);">${escapeHtml(a.CreatedBy || "")}</td>
+      <td style="color:var(--muted);">${a.LastLoginAt ? new Date(a.LastLoginAt).toLocaleString() : "Never"}</td>
+      <td>${isSuper
+            ? '<span style="color:var(--muted); font-size:12px;">Protected</span>'
+            : `<button class="btn btn-danger" style="padding:3px 8px;" data-admin-delete="${a.Id}" data-admin-name="${escapeHtml(a.Username)}">Delete</button>`}
+      </td>
+    </tr>`;
+      }).join("");
+
+      tbody.querySelectorAll("[data-admin-delete]").forEach(btn => {
+        btn.onclick = async () => {
+          if (!confirm(`Delete admin "${btn.dataset.adminName}"? They will be signed out immediately.`)) return;
+          const res = await fetch(`/api/admins/${btn.dataset.adminDelete}`, { method: "DELETE" });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            alert(err.error || "Could not delete admin.");
+          }
+          loadAdmins();
+        };
+      });
+    }
+
+    function openAddAdmin() {
+      ["newAdminUser", "newAdminPass", "newAdminPass2"].forEach(id => qs(id).value = "");
+      hideMsg("addAdminError");
+      qs("saveAddAdmin").disabled = false;
+      qs("modalAddAdmin").style.display = "flex";
+      qs("newAdminUser").focus();
+    }
+
+    async function addAdmin() {
+      hideMsg("addAdminError");
+      const username = qs("newAdminUser").value.trim();
+      const password = qs("newAdminPass").value;
+      if (!username) return showMsg("addAdminError", "Enter a username.");
+      if (password !== qs("newAdminPass2").value) return showMsg("addAdminError", "Passwords do not match.");
+
+      const btn = qs("saveAddAdmin");
+      btn.disabled = true;
+      try {
+        const res = await fetch("/api/admins", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          showMsg("addAdminError", data.error || "Could not create admin.");
+          btn.disabled = false;
+          return;
+        }
+        closeModals();
+        loadAdmins();
+      } catch (_) {
+        showMsg("addAdminError", "Cannot reach the server.");
+        btn.disabled = false;
+      }
+    }
+
+    ["modalAddAdmin", "modalChangePw"].forEach(id => {
+      qs(id).addEventListener("click", (e) => { if (e.target === qs(id)) closeModals(); });
+    });
+
+    // ---------------------------------------------------------------------------
+    // Initialization
+    // ---------------------------------------------------------------------------
+    load();
+    scheduleAuto();
+    loadUrls();
+    setInterval(loadUrls, 15000);
+    loadRules();
+    setInterval(loadRules, 15000);
+    loadDevices();
+    setInterval(loadDevices, 15000);
+    loadGroups();
+    setInterval(loadGroups, 15000);
+
+    // Popup navigation (opens / closes on click)
+    function setNav(open) {
+      qs("appShell").classList.toggle("nav-open", open);
+      const btn = qs("navToggle");
+      btn.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", String(open));
+      qs("navToggleLabel").textContent = open ? "Hide Navigation" : "Show Navigation";
+    }
+    function toggleNav() {
+      setNav(!qs("appShell").classList.contains("nav-open"));
+    }
+    setNav(false); // starts closed; content is always full width
+
+    // Close with the Escape key
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setNav(false);
+    });
+
+    // Menu item clicks: switch tab, then close the popup
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const tabId = tab.getAttribute("data-tab");
+        if (tabId) switchTab(tabId);
+        setNav(false);
+      });
+    });
+
+    // Group popups: drop a stale validation message as soon as the admin edits anything.
+    ["modalGroupEdit", "modalGroupAddMember"].forEach((id) => {
+      const el = qs(id);
+      const err = id === "modalGroupEdit" ? "geError" : "amError";
+      ["input", "change"].forEach((ev) => el.addEventListener(ev, () => hideMsg(err)));
+    });
+
+    // Always land on Data Analytics after login / reload
+    initAuth().finally(() => switchTab("tab-analytics"));
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+-- ============================================================================
+-- NOTE: server.js auto-creates dbo.DPromptShieldIncident and
+-- dbo.DPromptShieldMonitoredUrl on startup if they don't exist (ensureSchema()),
+-- seeding the default AI-site list the first time it runs. Fine for a local
+-- test database. For a real production database, create these explicitly
+-- and deliberately using the statements below with your DBA, and consider
+-- disabling ensureSchema() once you're past local testing.
+-- ============================================================================
+
+-- CREATE DATABASE DPromptShieldDB;
+-- GO
+-- USE DPromptShieldDB;
+-- GO
+
+-- CREATE TABLE dbo.DPromptShieldIncident (
+--     Id            BIGINT IDENTITY(1,1) PRIMARY KEY,
+--     EventTs       DATETIME2      NOT NULL,
+--     SiteHost      NVARCHAR(255)  NULL,
+--     ActionTaken   NVARCHAR(50)   NOT NULL DEFAULT 'BLOCKED',
+--     PromptLength  INT            NULL,
+--     FindingsJson  NVARCHAR(MAX)  NOT NULL,   -- [{type, masked}], masked values only
+--     ClientIp      NVARCHAR(45)   NULL,       -- IPv4 or IPv6
+--     EmployeeId    NVARCHAR(100)  NULL,       -- from chrome.storage.managed (enterprise policy)
+--     DeviceLabel   NVARCHAR(255)  NULL,       -- from chrome.storage.managed (enterprise policy)
+--     InsertedAt    DATETIME2      NOT NULL DEFAULT SYSUTCDATETIME()
+-- );
+-- CREATE INDEX IX_DPromptShieldIncident_EventTs ON dbo.DPromptShieldIncident(EventTs);
+-- CREATE INDEX IX_DPromptShieldIncident_ClientIp ON dbo.DPromptShieldIncident(ClientIp);
+
+-- CREATE TABLE dbo.DPromptShieldMonitoredUrl (
+--     Id        INT IDENTITY(1,1) PRIMARY KEY,
+--     Pattern   NVARCHAR(500) NOT NULL UNIQUE,
+--     Enabled   BIT NOT NULL DEFAULT 1,
+--     CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+-- );
+
+-- CREATE TABLE dbo.DPromptShieldRule (
+--     Id        INT IDENTITY(1,1) PRIMARY KEY,
+--     Type      NVARCHAR(50)   NOT NULL UNIQUE,
+--     Label     NVARCHAR(255)  NOT NULL,
+--     Pattern   NVARCHAR(1000) NOT NULL,          -- regex source, no slashes
+--     Flags     NVARCHAR(10)   NOT NULL DEFAULT 'g',
+--     Validator NVARCHAR(20)   NOT NULL DEFAULT 'none', -- 'none' | 'luhn' | 'nik'
+--     KeyMode   NVARCHAR(10)   NOT NULL DEFAULT 'digits', -- 'digits' | 'text'
+--     Action    NVARCHAR(20)   NOT NULL DEFAULT 'block',  -- 'block' | 'monitor'
+--     Enabled   BIT NOT NULL DEFAULT 1,
+--     CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+-- );
+
+-- CREATE TABLE dbo.DPromptShieldDevice (
+--     Id            INT IDENTITY(1,1) PRIMARY KEY,
+--     ClientIp      NVARCHAR(45) NOT NULL UNIQUE,
+--     FirstSeen     DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+--     LastSeen      DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+--     CheckinCount  INT NOT NULL DEFAULT 1
+-- );
+
+-- Groups replace the old per-IP whitelist (dbo.DPromptShieldWhitelist).
+-- A group is an exemption preset; a device is exempt when its IP is a member.
+-- "General" (IsSystem = 1) is the built-in default group with no exemptions.
+-- Its membership is implicit (every known device in no other group), so no
+-- DPromptShieldGroupMember rows are ever stored for it.
+-- CREATE TABLE dbo.DPromptShieldGroup (
+--     Id              INT IDENTITY(1,1) PRIMARY KEY,
+--     Name            NVARCHAR(100)  NOT NULL,
+--     ExemptAllUrls   BIT            NOT NULL DEFAULT 0,
+--     ExemptAllTypes  BIT            NOT NULL DEFAULT 0,
+--     ExemptUrlsJson  NVARCHAR(MAX)  NULL,   -- JSON array, used when ExemptAllUrls = 0
+--     ExemptTypesJson NVARCHAR(MAX)  NULL,   -- JSON array of DPromptShieldRule.Type, used when ExemptAllTypes = 0
+--     IsSystem        BIT            NOT NULL DEFAULT 0,
+--     CreatedAt       DATETIME2      NOT NULL DEFAULT SYSUTCDATETIME(),
+--     CreatedBy       NVARCHAR(50)   NULL
+-- );
+-- CREATE UNIQUE INDEX UX_DPromptShieldGroup_Name ON dbo.DPromptShieldGroup(Name);
+-- INSERT INTO dbo.DPromptShieldGroup (Name, IsSystem, CreatedBy) VALUES (N'General', 1, N'system');
+--
+-- CREATE TABLE dbo.DPromptShieldGroupMember (
+--     Id        INT IDENTITY(1,1) PRIMARY KEY,
+--     GroupId   INT           NOT NULL REFERENCES dbo.DPromptShieldGroup(Id) ON DELETE CASCADE,
+--     ClientIp  NVARCHAR(45)  NOT NULL,
+--     AddedAt   DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
+--     AddedBy   NVARCHAR(50)  NULL
+-- );
+-- CREATE INDEX IX_DPromptShieldGroupMember_ClientIp ON dbo.DPromptShieldGroupMember(ClientIp);
+-- CREATE UNIQUE INDEX UX_DPromptShieldGroupMember_Group_Ip ON dbo.DPromptShieldGroupMember(GroupId, ClientIp);
+--
+-- On first start after upgrading, server.js copies any rows from the old
+-- dbo.DPromptShieldWhitelist into groups (one group per distinct URL + type
+-- pair, named "Legacy - ..."), then renames that table to
+-- DPromptShieldWhitelist_legacy. Nothing is dropped.
+
+-- Console login accounts. auth.js creates this table and seeds the default
+-- superadmin + admin on first run (only when the table is empty).
+-- CREATE TABLE dbo.DPromptShieldAdmin (
+--     Id                INT IDENTITY(1,1) PRIMARY KEY,
+--     Username          NVARCHAR(50)  NOT NULL UNIQUE,
+--     PasswordHash      NVARCHAR(300) NOT NULL,           -- scrypt$N$r$p$salt$hash
+--     Role              NVARCHAR(20)  NOT NULL DEFAULT 'admin',  -- 'superadmin' | 'admin'
+--     CreatedAt         DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
+--     CreatedBy         NVARCHAR(50)  NULL,
+--     PasswordChangedAt DATETIME2     NULL,
+--     LastLoginAt       DATETIME2     NULL,
+--     CONSTRAINT CK_DPromptShieldAdmin_Role CHECK (Role IN ('superadmin', 'admin'))
+-- );
+
+-- Suggested least-privilege login for the relay:
+-- CREATE LOGIN aipii_guard_svc WITH PASSWORD = 'ReplaceMe!';
+-- CREATE USER aipii_guard_svc FOR LOGIN aipii_guard_svc;
+-- GRANT INSERT, SELECT ON dbo.DPromptShieldIncident TO aipii_guard_svc;
+-- GRANT INSERT, SELECT, UPDATE, DELETE ON dbo.DPromptShieldMonitoredUrl TO aipii_guard_svc;
+-- GRANT INSERT, SELECT, UPDATE, DELETE ON dbo.DPromptShieldAdmin TO aipii_guard_svc;
+-- GRANT INSERT, SELECT, UPDATE, DELETE ON dbo.DPromptShieldGroup TO aipii_guard_svc;
+-- GRANT INSERT, SELECT, UPDATE, DELETE ON dbo.DPromptShieldGroupMember TO aipii_guard_svc;

@@ -1,0 +1,21 @@
+  {
+  "name": "dpromptshield-enterprise",
+  "version": "1.1.0",
+  "description": "DPromptShield enterprise AI-assisted data loss prevention console and browser extension relay",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check auth.js && node --check ai-services.js && node --check ip-attribution.js && node --check policy-engine.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "google-auth-library": "^11.3.1",
+    "mssql": "^11.0.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "deviceLabel": { "type": "string" },
+    "employeeId":  { "type": "string" },
+    "department":  { "type": "string" }
+  }
+}

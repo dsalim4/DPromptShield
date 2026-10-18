@@ -1,0 +1,10 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/dpromptshield:$COMMIT_SHA', '.']
+  - name: gcr.io/cloud-builders/docker
+    args: ['push', 'gcr.io/$PROJECT_ID/dpromptshield:$COMMIT_SHA']
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args: ['run','deploy','dpromptshield','--image=gcr.io/$PROJECT_ID/dpromptshield:$COMMIT_SHA','--region=asia-southeast2','--platform=managed','--allow-unauthenticated','--port=8080','--set-env-vars=NODE_ENV=production,FIREBASE_PROJECT_ID=$PROJECT_ID,GEMINI_MODEL=gemini-2.5-flash,COOKIE_SECURE=true,DB_SERVER=CHANGE_ME_SQL_HOST,DB_PORT=1433,DB_DATABASE=DPromptShieldDB,DB_USER=CHANGE_ME_SQL_USER,DB_ENCRYPT=true,DB_TRUST_SERVER_CERT=false','--set-secrets=GEMINI_API_KEY=GEMINI_API_KEY:latest,DB_PASSWORD=DPROMPTSHIELD_DB_PASSWORD:latest,INITIAL_SUPERADMIN_PASSWORD=DPROMPTSHIELD_INITIAL_SUPERADMIN_PASSWORD:latest,INITIAL_ADMIN_PASSWORD=DPROMPTSHIELD_INITIAL_ADMIN_PASSWORD:latest']
+images:
+  - gcr.io/$PROJECT_ID/dpromptshield:$COMMIT_SHA

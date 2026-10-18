@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DPromptShield</title>
+<style>
+  :root {
+    --mandiri-blue: #003D79;
+    --mandiri-blue-dark: #002447;
+    --mandiri-yellow: #FFB700;
+    --mandiri-sky-blue: #67B2E8;
+    --mandiri-orange: #EA7200;
+    --mandiri-grey: #B6B8BA;
+    
+    --bg: #07152b;
+    --panel: #0d2244;
+    --panel2: #122c54;
+    --border: #183864;
+    --text: #f0f4fa;
+    --muted: #95a9c3;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    width: 380px;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    user-select: none;
+  }
+  
+  /* Brand top bar */
+  .brand-stripe {
+    height: 4px;
+    background: linear-gradient(90deg, var(--mandiri-blue) 0%, var(--mandiri-blue) 50%, var(--mandiri-yellow) 50%, var(--mandiri-yellow) 85%, var(--mandiri-sky-blue) 85%, var(--mandiri-sky-blue) 100%);
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(180deg, var(--mandiri-blue) 0%, #002e5b 100%);
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-logo {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  .header h1 {
+    font-size: 15px;
+    margin: 0;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .header .tagline {
+    font-size: 11px;
+    color: var(--mandiri-sky-blue);
+    margin-top: 1px;
+    font-weight: 500;
+  }
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(103, 178, 232, 0.15);
+    border: 1px solid rgba(103, 178, 232, 0.3);
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    color: var(--mandiri-sky-blue);
+    font-weight: 600;
+  }
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 6px #22c55e;
+  }
+
+  /* Body Content */
+  .container {
+    padding: 14px 16px;
+  }
+
+  /* Info cards */
+  .info-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .info-item {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.35;
+    word-break: break-word;
+  }
+  .info-item strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* Actions Bar */
+  .actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--mandiri-sky-blue);
+  }
+  .btn-group {
+    display: flex;
+    gap: 6px;
+  }
+  button {
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 6px 11px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+  }
+  button.primary {
+    background: var(--mandiri-yellow);
+    color: var(--mandiri-blue-dark);
+    box-shadow: 0 2px 8px rgba(255, 183, 0, 0.25);
+  }
+  button.primary:hover {
+    background: #e6a500;
+  }
+  button.secondary {
+    background: var(--panel2);
+    color: var(--mandiri-sky-blue);
+    border: 1px solid var(--border);
+  }
+  button.secondary:hover {
+    background: #183864;
+    border-color: var(--mandiri-sky-blue);
+    color: #ffffff;
+  }
+
+  /* Log list */
+  #list {
+    max-height: 270px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 2px;
+  }
+  #list::-webkit-scrollbar {
+    width: 5px;
+  }
+  #list::-webkit-scrollbar-track {
+    background: var(--bg);
+  }
+  #list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+  #list::-webkit-scrollbar-thumb:hover {
+    background: var(--mandiri-sky-blue);
+  }
+
+  /* Log row item */
+  .row {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 11px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .row:hover {
+    background: var(--panel2);
+    border-color: #20457a;
+  }
+  .row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 11px;
+  }
+  .row-site {
+    font-weight: 600;
+    color: var(--mandiri-sky-blue);
+  }
+  .row-time {
+    color: var(--muted);
+    font-size: 10px;
+  }
+  .badge {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-blocked {
+    background: rgba(234, 114, 0, 0.18);
+    color: #ff9d5c;
+    border: 1px solid rgba(234, 114, 0, 0.45);
+  }
+  .badge-paste {
+    background: rgba(255, 183, 0, 0.18);
+    color: var(--mandiri-yellow);
+    border: 1px solid rgba(255, 183, 0, 0.45);
+  }
+  .badge-drop {
+    background: rgba(103, 178, 232, 0.18);
+    color: var(--mandiri-sky-blue);
+    border: 1px solid rgba(103, 178, 232, 0.45);
+  }
+  .badge-monitored {
+    background: rgba(103, 178, 232, 0.18);
+    color: #67B2E8;
+    border: 1px solid rgba(103, 178, 232, 0.45);
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+  .tag {
+    background: rgba(0, 61, 121, 0.6);
+    color: var(--mandiri-sky-blue);
+    border: 1px solid #1a4d8f;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .masked {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 28px 16px;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+  }
+  .empty-icon {
+    font-size: 26px;
+    margin-bottom: 6px;
+    opacity: 0.9;
+  }
+  .empty-title {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .empty-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 8px 16px 12px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--mandiri-grey);
+    text-align: center;
+    background: var(--bg);
+  }
+</style>
+</head>
+<body>
+  <div class="brand-stripe"></div>
+  <div class="header">
+    <div class="header-brand">
+      <img class="header-logo" src="icons/icon-48.png" alt="DPromptShield">
+      <div>
+        <h1>DPromptShield</h1>
+        <div class="tagline">Enterprise DLP · Bank Mandiri</div>
+      </div>
+    </div>
+    <div class="status-pill">
+      <span class="pulse-dot"></span>
+      <span>Active</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="info-box" style="display: none;">
+      <div id="urls" class="info-item">Monitoring: syncing from console…</div>
+      <div id="identity" class="info-item">Device IP logged by relay server on each incident.</div>
+    </div>
+
+    <div class="actions-bar">
+      <span class="section-label">Incident Events</span>
+      <div class="btn-group" style="display: none;">
+        <button id="export" class="primary">Export JSON</button>
+        <button id="clear" class="secondary">Clear</button>
+      </div>
+    </div>
+
+    <div id="list"></div>
+  </div>
+
+  <div class="footer">
+    Bank Mandiri CISO Office Group · All prompts inspected client-side
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

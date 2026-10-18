@@ -1,0 +1,11 @@
+node_modules
+.env
+.env.*
+!.env.example
+signing-key/
+*.pem
+.git
+*.crx
+README_15102026.md
+public/dashboard_15102026.html
+public/login_15102026.html
